@@ -1,0 +1,17 @@
+{
+    "error_messages": {
+        "connection_error": "Connection Error occured:",
+        "connection_closed_sigint": "Database Server connection closed through App termination!",
+        "connection_closed_db_server": "Disconnected from the database server",
+        "connection_failed_max_retries": "Reached Max. Retries! Failed to reconnect to datbase",
+        "error_generic": "Error Occured:"
+    },
+    "info_messages": {
+        "connected_to_db_server": "Connected to the database server",
+        "connecting_to_db_server": "Connecting to the database server",
+        "disconnecting_from_db_server": "Disconnecting from the database server",
+        "connected_to_db_on_port": "Connected to the database server on port ",
+        "connected_to_silc_server": "Connected to the SILC Server successfully!",
+        "listening_to_silc_server": "Listening on port "
+    }
+}
