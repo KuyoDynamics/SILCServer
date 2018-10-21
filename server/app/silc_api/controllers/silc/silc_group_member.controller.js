@@ -22,7 +22,7 @@ async function createSILCGroupMember(req, res, next){
         await silc_group_member.validate();
         console.log('[silcserver] SILC Group Member data fields for ', silc_group_member._id, ' successfully passed validation!');
 
-        await SILCGroup.updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $push: { members: silc_group_member._id }},ops);
+        await SILCGroup.updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $push: { members: silc_group_member._id }}, ops);
         console.log('[silcserver] SILC Groups for ', silc_group_member._id, ' were successfully updated!');
 
         const result = await silc_group_member.save(ops);
@@ -38,10 +38,10 @@ async function createSILCGroupMember(req, res, next){
         return;
     } catch (error) {
         await session.abortTransaction();
-        console.log('Transaction aborted!')
+        console.log('[silcserver] Transaction aborted!')
 
         session.endSession();
-        console.log('Transaction ended!')
+        console.log('[silcserver] Transaction ended!')
         
         res.status(422); //422 is Unprocessed Entity
         return next(error);

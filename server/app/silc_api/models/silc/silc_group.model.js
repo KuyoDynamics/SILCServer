@@ -38,12 +38,13 @@ let SILCGroupSchema = new Schema({
 
 //pre updateMany hook
 SILCGroupSchema.pre('updateMany', function(next){
-    let query = this.getQuery()._id.$in;
-    if(!query.length){
-        return next(new Error('group ids is empty: a member must belong atleast to one silc group'));
-    }
-    else
-        return next();
+    // let query = this.getQuery()._id.$in;
+    // if(!query.length){
+    //     return next(new Error('group ids is empty: a member must belong atleast to one silc group'));
+    // }
+    // else
+    //     return next();
+    return next();
 })
 //post updateMany hook
 SILCGroupSchema.post('updateMany', function(commandResult, next){

@@ -3,30 +3,38 @@ const Schema = mongoose.Schema;
 const SILCGroup = require('./silc_group.model');
 
 let SILCGroupMemberSchema = new Schema({
-    silc_groups: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: 'SILCGroup', 
-        required: true,
+    silc_groups: {
+        type: [{ 
+            type: Schema.Types.ObjectId, 
+            ref: 'SILCGroup', 
+            required: true,
+            validate: {
+                isAsync: true,
+                validator: function(v, callback){
+                    
+                    return SILCGroup.findById(v, function(err, silc_group){
+                            if(err){
+                                return callback(false, err);
+                            }
+                            if(silc_group){
+                                console.log('Group: ', silc_group);
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                },
+                message: "silc_groups field values must be valid existing group ids"
+            }}],
         validate: {
-            isAsync: true,
-            validator: function(v, callback){
-                
-                return SILCGroup.findById(v, function(err, silc_group){
-                        if(err){
-                            return callback(false, err);
-                        }
-                        if(silc_group){
-                            console.log('Group: ', silc_group);
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    });
+            validator: function(v) {
+                console.log("V is : ", v);
+                return v.length > 0;
             },
-            message: "silc_groups field values must be valid existing group ids"
+            message: "a member must belong to atleast one valid SILC Group. silc_groups cannot be empty"
         }
-    }],
+    },
     first_name: { 
         type: String, 
         required: true, 
@@ -54,18 +62,7 @@ let SILCGroupMemberSchema = new Schema({
 
 //Pre save hook
 SILCGroupMemberSchema.pre('save', function(){
-    // console.log('Member ID: '+this._id);
-    // let id = member._id;
-    // var update = {
-    //    $push: {
-    //      members: id
-    //    }
-    //  };
-    // SILCGroup.updateOne({_id: member.silc_group},update,{new: true}, function(error){
-    //    if(error) {
-    //        throw error;
-    //    };
-    // });
+    
 });
 
 //Pre find hook

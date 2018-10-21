@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const bodyParser = require('body-parser');
 const path = require('path');
 const app_name = require('../../package.json').name;
+const morgan = require('morgan');
 const logger = require('../helpers/logger');
 const strings = require('../helpers/strings');
 
@@ -13,12 +14,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
 
+app.use(morgan('common'));
 //Load routes
 require('../app/app.router')(app, app_name, logger, chalk);
 
 //Register Generic Error Handler
 app.use(function(err,req,res,next){
-  console.log('Error:',err.message);
+  console.log('[silcserver] Error:', err.message);
   res.send({
     status: err.name,
     message: err.message,
