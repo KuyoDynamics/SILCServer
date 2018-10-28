@@ -80,6 +80,18 @@ SILCGroupMemberSchema.post('findOneAndUpdate', function(){
 
 });
 
+//Post updateMany hook
+SILCGroupMemberSchema.post('updateMany', function(){
+    let query = this.getQuery()._id.$in;
+    if(query.length !== commandResult.result.nModified) {
+        return next( new Error('not all group ids were matched and updated: Group ids(' + query +')'));
+    }
+    else {
+        console.log('Passed In hook...')
+        return next();
+    }
+});
+
 //Create model
 let SILCGroupMember = mongoose.model('SILCGroupMember', SILCGroupMemberSchema);
 

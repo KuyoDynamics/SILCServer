@@ -1,6 +1,6 @@
 const moment = require('moment');
-let mongoose = require('mongoose');
 let SILCGroup = require('../../models/silc/silc_group.model');
+let SILCGroupMember = require('../../models/silc/silc_group_member.model');
 
 
 //GET api/silcgroups
@@ -58,28 +58,50 @@ async  function getAllSILCGroups(req, res, next){
 // }
 
 // //POST api/silcgroups
-// exports.createSILCGroup = function(req, res){
-//     //Create SILC Group
-//     const silc_group = new SILCGroup({
-//             name: req.body.name,
-//             whatsapp_url: req.body.whatsapp_url,
-//             location: req.body.location,
-//             date_formed: req.body.date_formed,
-//             active: req.body.active,
-//             members: req.body.members
-//         });
-   
-//     //Save Group
-//     silc_group.save()
-//     .then(data => {
-//         res.send(data);
-//     }).catch(err => {
-//         res.status(500).send({
-//             message: err.message || "Some error occured while creating a SILC Group!"
-//         });
-//     });
+async function createSILCGroup(req, res, next){
 
-// }
+    const silc_group = new SILCGroup({
+            name: req.body.name,
+            whatsapp_url: req.body.whatsapp_url,
+            location: req.body.location,
+            date_formed: req.body.date_formed,
+            active: req.body.active,
+            archived: req.body.archived,
+            members: req.body.members
+    });
+    
+    const session = await SILCGroup.startSession()    ;
+    try {
+        session.startTransaction();
+
+        const ops = { session };
+
+        await silc_group.validate();
+        console.log('[silcserver] SILC group data fields for ', silc_group._id, ' successfully passed validation!');
+
+        const result = await silc_group.save(ops);
+        console.log('[silcserver] New SILC Group with id: ', silc_group._id, ' was successfully created!');
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(201).send({
+            message: "Record created successfully",
+            record: result
+        });
+        return;
+
+    } catch (error) {
+        await session.abortTransaction();
+        console.log('[silcserver] Transaction aborted!')
+
+        session.endSession();
+        console.log('[silcserver] Transaction ended!')
+        
+        res.status(422); //422 is Unprocessed Entity
+        return next(error);
+    }
+}
 
 // //DELETE api/silcgroups/:id
 // exports.deleteSILCGroup = function(req, res){
@@ -106,6 +128,7 @@ async  function getAllSILCGroups(req, res, next){
 // };
 
 module.exports = {
-    getAllSILCGroups: getAllSILCGroups  
+    getAllSILCGroups,
+    createSILCGroup  
 }
 

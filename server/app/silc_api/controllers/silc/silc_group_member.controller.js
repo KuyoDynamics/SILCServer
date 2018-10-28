@@ -22,7 +22,6 @@ async function createSILCGroupMember(req, res, next){
         await silc_group_member.validate();
         console.log('[silcserver] SILC Group Member data fields for ', silc_group_member._id, ' successfully passed validation!');
 
-        //Note: To add each element of the value separately to array, use the $each modifier with $addToSet.The $each modifier allows the $addToSet operator to add multiple values to the array field. Example if you are adding a new group with multiple members
         await SILCGroup.updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $addToSet: { members: silc_group_member._id }}, ops);
         console.log('[silcserver] SILC Groups for ', silc_group_member._id, ' were successfully updated!');
 
