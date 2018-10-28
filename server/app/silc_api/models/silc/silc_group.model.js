@@ -5,9 +5,16 @@ let SILCGroupSchema = new Schema({
     name: { 
         type: String, 
         required: true,
+        unique: true,
         minlength: 5, 
         maxlength: 50, 
-        alias: 'Group Name' 
+        alias: 'Group Name',
+        validate: {
+            validator: function(v){
+                return /^((?!silc)(?!group).)*$/i.test(v)
+            },
+            message: 'Words such as SILC and Group are not allowed to be part of a SILC Group name'
+        } 
     },
     whatsapp_url: { 
         type: String, 
