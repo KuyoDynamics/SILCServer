@@ -21,6 +21,8 @@ In order to setup this application,on your development machine, you need first t
 * ```NPM``` installed
 * Node.JS version 10.2.1 or higher installed
 * Git (a distributed version control system) installed
+* MongoDB installed and replicaSet setup as described [here](https://docs.mongodb.com/manual/tutorial/deploy-replica-set-for-testing/)
+* You can also use `run-rs` to quickly setup a mongodb replica set on your development machine as described [here](http://thecodebarbarian.com/introducing-run-rs-zero-config-mongodb-runner.html) and on its [npm page](https://www.npmjs.com/package/run-rs).
 
 To get a copy of the application , run the following command:
 ```

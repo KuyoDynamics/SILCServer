@@ -6,12 +6,12 @@ router.route('/')
     //Get ALL SILC Groups
     .get(controller.getAllSILCGroups)
     //Add New SILC Group
-    .post(controller.createSILCGroup)
+   // .post(controller.createSILCGroup)
 router.route('/:id')
     //Get a specific Group
-    .get(validateParam(schemas.idSchema, 'id'), controller.getSILCGroup)
+    //.get(validateParam(schemas.idSchema, 'id'), controller.getSILCGroup)
     //Update SILC Group Record
-    .put(controller.updateSILCGroup)
+    //.put(controller.updateSILCGroup)
     //Delete SILC Group Record
-    .delete(controller.deleteSILCGroup)
+    //.delete(controller.deleteSILCGroup)
 module.exports = router;
