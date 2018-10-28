@@ -29,6 +29,10 @@ let SILCGroupSchema = new Schema({
         required: true, 
         alias: 'Active' 
     },
+    archived: {
+        type: Boolean,
+        alias: 'Arcived'
+    },
     members: [{ 
         type: Schema.Types.ObjectId, 
         ref: 'SILCGroupMember' 
