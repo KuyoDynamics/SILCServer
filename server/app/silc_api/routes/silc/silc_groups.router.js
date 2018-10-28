@@ -6,7 +6,7 @@ router.route('/')
     //Get ALL SILC Groups
     .get(controller.getAllSILCGroups)
     //Add New SILC Group
-   // .post(controller.createSILCGroup)
+   .post(controller.createSILCGroup)
 router.route('/:id')
     //Get a specific Group
     //.get(validateParam(schemas.idSchema, 'id'), controller.getSILCGroup)

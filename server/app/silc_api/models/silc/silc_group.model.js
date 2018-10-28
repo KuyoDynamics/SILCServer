@@ -29,11 +29,26 @@ let SILCGroupSchema = new Schema({
         required: true, 
         alias: 'Active' 
     },
-    members: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: 'SILCGroupMember' 
-    }]
-    
+    archived: {
+        type: Boolean,
+        alias: 'Archived'
+    },
+    members: {
+        type:
+            [{ 
+            type: Schema.Types.ObjectId, 
+            ref: 'SILCGroupMember',
+            required: true 
+            }],
+        required: true,
+          "active":true,
+        validate: {
+            validator: function(v) {
+                return v.length <= 0;
+            },
+            message: "a members field must be empty when new group is created"
+        }
+    }    
 }, {timestamps: true});
 
 //pre updateMany hook
