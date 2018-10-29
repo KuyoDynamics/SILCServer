@@ -10,6 +10,8 @@ const morgan = require('morgan');
 const logger = require('../helpers/logger');
 const strings = require('../helpers/strings');
 
+mongoose.set('useCreateIndex', true);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
