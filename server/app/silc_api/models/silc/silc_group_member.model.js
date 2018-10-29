@@ -35,28 +35,68 @@ let SILCGroupMemberSchema = new Schema({
             message: "a member must belong to atleast one valid SILC Group. silc_groups cannot be empty"
         }
     },
-    first_name: { 
-        type: String, 
-        required: true, 
-        minlength: 2, 
-        alias: "First Name" 
-    },
-    middle_name: { 
-        type: String, 
-        required: false, 
-        minlength: 2, 
-        alias: "Middle Name" 
-    },
-    last_name: { 
-        type: String, 
-        required: true, 
-        minlength: 2, 
-        alias: "Last Name" 
-    },
+    name: {
+        first_name: { 
+            type: String, 
+            required: true, 
+            minlength: 2, 
+            trim: true,
+            alias: "First Name" 
+        },
+        middle_name: { 
+            type: String, 
+            required: false, 
+            trim: true,
+            minlength: 2, 
+            alias: "Middle Name" 
+        },
+        last_name: { 
+            type: String, 
+            required: true, 
+            trim: true,
+            minlength: 2, 
+            alias: "Last Name" 
+        }
+    },    
     sex: { 
         type: String, 
         enum: ['male','female','unknown'], 
+        lowercase: true,
+        trim: true,
         required: true
+    },
+    email: {
+        type: String,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        match: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/i
+    },
+    phone: {
+        type: String,
+        unique: true,
+        trim: true,
+        required: true
+    },
+    national_id: {
+        type: {
+            id_type: {
+                type: String,
+                 enum: ['national_id','passport_id', 'driving_license']
+            },
+            id_value: {
+                type: String,
+                validate: {
+                    validator: function(v, callback) {
+                        //conditionally run validation based on type of id passed 
+                        return false;
+                    }
+                }
+            }
+        },
+        unique: true,
+        trim: true,
+        required: false
     }
 }, {timestamps: true});
 

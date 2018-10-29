@@ -19,7 +19,8 @@ let SILCGroupSchema = new Schema({
     whatsapp_url: { 
         type: String, 
         required: true, 
-        alias: 'Group URL' 
+        alias: 'Group URL',
+        unique: true
     },
     location: { 
         type: String, 
