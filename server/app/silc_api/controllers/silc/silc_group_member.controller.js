@@ -9,7 +9,10 @@ async function createSILCGroupMember(req, res, next){
         first_name: req.body.first_name,
         last_name: req.body.last_name,
         middle_name: req.body.middle_name,
-        sex: req.body.sex
+        sex: req.body.sex,
+        phone: req.body.phone,
+        email: req.body.email,
+        identification_id: req.body.identification_id
     });
 
     const session = await SILCGroupMember.startSession();
