@@ -12,7 +12,7 @@ async function createSILCGroupMember(req, res, next){
         sex: req.body.sex,
         phone: req.body.phone,
         email: req.body.email,
-        identification_id: req.body.identification_id
+        identification: req.body.identification
     });
 
     const session = await SILCGroupMember.startSession();

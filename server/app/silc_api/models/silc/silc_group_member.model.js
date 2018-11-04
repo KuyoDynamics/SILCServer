@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const SILCGroup = require('./silc_group.model');
 
-let IdentificationIDSchema = new Schema({
+let IdentificationSchema = new Schema({
     id_type: {
         type: String,
          enum: ['national_id','passport_id', 'driving_license'],
@@ -27,14 +27,8 @@ let IdentificationIDSchema = new Schema({
             },
             message: "Invalid Identification number"
         }
-        // ,
-        // validate: {
-        //     isAsync: true,
-        //     validator: isIdentificationIdDuplicate,
-        //     message: "silc_group_member with the same id number already exists"
-        // }
     }
-})
+});
 
 let SILCGroupMemberSchema = new Schema({
     silc_groups: {
@@ -96,8 +90,8 @@ let SILCGroupMemberSchema = new Schema({
         trim: true,
         required: true
     },
-    identification_id: {
-        type: IdentificationIDSchema,
+    identification: {
+        type: IdentificationSchema,
         required: true
     }
 }, {timestamps: true});
@@ -109,7 +103,7 @@ function silcGroupIdExists(v, callback){
                 return callback(false, err);
             }
             if(silc_group){
-                console.log('Group: ', silc_group);
+                console.log('SILC Group found: ', silc_group._id);
                 return true;
             }
             else {
@@ -119,12 +113,12 @@ function silcGroupIdExists(v, callback){
 }
 
 function isIdentificationIdDuplicate(v, type){
-    return SILCGroupMember.findOne({"identification_id.id_value": v,"identification_id.id_type": type}, function(err, silc_group_member){
+    return SILCGroupMember.findOne({"identification.id_value": v,"identification.id_type": type}, function(err, silc_group_member){
         if(err){
             return callback(false, err);
         }
         if(!silc_group_member){
-            console.log('silc_group_member: ', silc_group_member);
+            console.log('silc_group_member found: ', silc_group_member._id);
             return true;
         }
         else {
@@ -148,7 +142,7 @@ function isValidDrivingLicense(driving_license){
 //Pre save hook
 SILCGroupMemberSchema.pre('save', function(){
     
-    let dup = isIdentificationIdDuplicate(this.identification_id.id_value, this.identification_id.id_type);
+    let dup = isIdentificationIdDuplicate(this.identification.id_value, this.identification.id_type);
 
     if(dup){
         return next(new Error("a member with the same id already exists."));
@@ -178,12 +172,10 @@ SILCGroupMemberSchema.post('updateMany', function(){
         return next( new Error('not all group ids were matched and updated: Group ids(' + query +')'));
     }
     else {
-        console.log('Passed In hook...')
         return next();
     }
 });
 
-//Create model
 let SILCGroupMember = mongoose.model('SILCGroupMember', SILCGroupMemberSchema);
 
 module.exports = SILCGroupMember;
