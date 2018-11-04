@@ -118,7 +118,6 @@ function isIdentificationIdDuplicate(v, type){
             return callback(false, err);
         }
         if(!silc_group_member){
-            console.log('silc_group_member found: ', silc_group_member._id);
             return true;
         }
         else {

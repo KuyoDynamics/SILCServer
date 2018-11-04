@@ -51,6 +51,46 @@ async function createSILCGroupMember(req, res, next){
     }
 };
 
+//PATCH api/silc_group_members/:id
+async function partialUpdateSILCGroupMember(req, res, next){
+    console.log("Params: ", req.params);
+    console.log("Body: ", req.body);
+
+    if(Object.keys(req.body).length === 0){
+        res.status(422);
+        return next(new Error('Cannot process empty request body'));
+    }
+
+    const session = await SILCGroupMember.startSession();
+
+    try {
+        session.startTransaction();
+
+        const ops = { session, new:true, runValidators: true, context: 'query' };
+        const result = await SILCGroupMember.findOneAndUpdate({_id: req.params.id}, req.body, ops);
+        if(!result){
+            throw new Error('SILC Group Member record could not be found: ' + req.params.id);
+        }
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).send({
+            message: "Record created successfully",
+            record: result
+        })
+        return;
+    } catch (error) {
+        await session.abortTransaction();
+        console.log('[silcserver] Update SILC Group Member Transaction aborted!')
+
+        session.endSession();
+        console.log('[silcserver] Update SILC Group Member Transaction ended!')
+        
+        res.status(422); //422 is Unprocessed Entity
+        return next(error);
+    }
+}
+
 // //GET api/silcgroups/:id
 // exports.getSILCGroup = function(req, res){
 //     SILCGroup.findById(req.params.id, function(err, silcGroup){
@@ -64,33 +104,6 @@ async function createSILCGroupMember(req, res, next){
 
 //     });
 // };
-
-// //PUT/PATCH api/silcGroup
-// exports.updateSILCGroup = function(req, res){
-
-//     var updateQuery = {
-//         group_name: req.body.group_name || null,
-//         group_url: req.body.group_url || null,
-//         group_location: req.body.group_location || null,
-//         group_formation_date: req.body.group_formation_date || null
-//     };
-   
-//     var filteredQuery = {};
-//     for(let x in updateQuery){
-//         if(updateQuery[x] !== null){
-//             filteredQuery[x]=updateQuery[x];
-//         }
-//     }
-
-//     SILCGroup.findOneAndUpdate(req.params.id, filteredQuery, {new: true},
-//         function(err, updatedSILCGroup){
-//             if(err) return res.status(404).json(err);
-//             return res.status(200).json(updatedSILCGroup);
-//         }
-//     );
-// }
-
-
 
 // //DELETE api/silcgroups/:id
 // exports.deleteSILCGroup = function(req, res){
@@ -135,5 +148,6 @@ async function createSILCGroupMember(req, res, next){
 //     }
 // }
 module.exports = {
-    createSILCGroupMember: createSILCGroupMember 
+    createSILCGroupMember,
+    partialUpdateSILCGroupMember
 }
