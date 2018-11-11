@@ -1,7 +1,36 @@
 let SILCGroupMember = require('../../models/silc/silc_group_member.model');
 let SILCGroup = require('../../models/silc/silc_group.model');
 
-//POST api/silcgroup_members
+/**
+ * Create a new SILCGroup Member record
+ * 
+ * Main outer API for creating a single SILCGroup Member record
+ * @public
+ * @example
+ * POST api/silc_group_members/
+ * req.body = {
+ *   "silc_groups": [
+ *       "5bdf0d451231a14d0c86704d"
+    ],
+ *   "_id": "5bdf103276ce642bb8b268c3",
+ *   "first_name": "Mulenga",
+ *   "last_name": "Chaiwa",
+ *   "middle_name": "Bwalya",
+ *   "sex": "male",
+ *   "phone": "+260974710133",
+ *   "email": "chaiwa-berian-e1b1a@gmail.com",
+ *   "identification": {
+ *       "_id": "5bdf103276ce642bb8b268c4",
+ *       "id_type": "national_id",
+ *       "id_value": "129047/52/1"
+ *   }
+ * }
+ * @param {*} req incoming http request
+ * @param {*} res http server response
+ * @param {*} next the next express middleware in the pipeline
+ * @function
+ * @returns {*} Object which can either be an error or newly created record
+ */
 async function createSILCGroupMember(req, res, next){
 
     const silc_group_member = new SILCGroupMember({
@@ -51,7 +80,21 @@ async function createSILCGroupMember(req, res, next){
     }
 };
 
-//PATCH api/silc_group_members/:id
+/**
+ * Partially update the SILCGroup Member details
+ * Main outer API for updating a single SILCGroup Member details
+ * @public
+ * @example
+ * PATCH api/silc_group_members/:id
+ * req.body = {
+ *  "first_name": "Berian"
+ * }
+ * @function
+ * @param {*} req incoming http request
+ * @param {*} res http server response
+ * @param {*} next next middleware in the pipeline
+ * @returns {*} Object which can either be an error or updated record
+ */
 async function partialUpdateSILCGroupMember(req, res, next){
     console.log("Params: ", req.params);
     console.log("Body: ", req.body);
@@ -75,7 +118,7 @@ async function partialUpdateSILCGroupMember(req, res, next){
         session.endSession();
 
         res.status(200).send({
-            message: "Record created successfully",
+            message: "Record updated successfully",
             record: result
         })
         return;

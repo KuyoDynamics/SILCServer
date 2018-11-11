@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const admin = express();
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
@@ -18,7 +19,7 @@ app.use(express.static(path.join(__dirname, '../../public')));
 
 app.use(morgan('common'));
 //Load routes
-require('../app/app.router')(app, app_name, logger, chalk);
+require('../app/app.router')(app, admin, app_name, logger, chalk);
 
 //Register Generic Error Handler
 app.use(function(err,req,res,next){
