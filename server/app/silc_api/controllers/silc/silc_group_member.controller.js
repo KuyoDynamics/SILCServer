@@ -136,19 +136,38 @@ async function partialUpdateSILCGroupMember(req, res, next){
     }
 };
 
-// //GET api/silcgroups/:id
-// exports.getSILCGroup = function(req, res){
-//     SILCGroup.findById(req.params.id, function(err, silcGroup){
-//         if(err) {
-//             console.log(err);
-//             return res.json(err);
-//         }
-//         else {
-//             return res.json(silcGroup);
-//         }
+/**
+ * GET a Single SILCGroup Member by Id
+ * 
+ * Main outer API for getting a single SILCGroup Member record.It can also
+ * be used to filter out the fields that get returned if passed filter parameters
+ * @public
+ * @example
+ * GET api/silc_group_members/:id
+ * OR
+ * GET api/silc_group_members/:id?fields=[first_name,last_name]
+ * }
+ * @function
+ * @param {*} req incoming http request
+ * @param {*} res http server response
+ * @param {*} next next middleware in the pipeline
+ * @returns {*} Object which can either be an error or updated record
+ */
+function getSILCGroupMember(req, res, next){
+    SILCGroupMember.findById(req.params.id, function(err, silcGroupMember){
+        if(err) {
+            console.log(err);
+            return next(res.json(err));
+        }
+        else {
+            if(!silcGroupMember){
+                return next(res.status(422).json({message: 'Member not found: '+req.params.id}));
+            }
+            return next(res.status(200).json(silcGroupMember));
+        }
 
-//     });
-// };
+    });
+};
 
 // //DELETE api/silcgroups/:id
 // exports.deleteSILCGroup = function(req, res){
@@ -177,5 +196,6 @@ async function partialUpdateSILCGroupMember(req, res, next){
 
 module.exports = {
     createSILCGroupMember,
-    partialUpdateSILCGroupMember
+    partialUpdateSILCGroupMember,
+    getSILCGroupMember
 }

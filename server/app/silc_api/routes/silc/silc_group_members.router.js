@@ -7,8 +7,7 @@ router.route('/')
     //Add New SILC Group Members
     .post(controller.createSILCGroupMember) ///api/silc_group_members
 router.route('/:id')
-    //Get a specific Group Members
-    //.get(controller.getSILCGroupMember)
+    .get(controller.getSILCGroupMember)
     //Update SILC Group Member Record
     .patch(controller.partialUpdateSILCGroupMember)
     //Delete SILC Group Record Member
