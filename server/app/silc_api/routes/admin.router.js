@@ -1,9 +1,10 @@
 let router = require('express').Router();
 
 
-router.route('/')
+module.exports = function(){
+    router.route('/')
     .get(function(req,res){
         
-        res.send('Admin Homepage');
+        return res.send('Admin Homepage');
     })
-module.exports = router;
+}

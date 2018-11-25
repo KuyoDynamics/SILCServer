@@ -70,10 +70,10 @@ async function createSILCGroupMember(req, res, next){
         return;
     } catch (error) {
         await session.abortTransaction();
-        console.log('[silcserver] Transaction aborted!')
+        console.log('[silcserver] Transaction for creating a new SILC Group Member aborted!')
 
         session.endSession();
-        console.log('[silcserver] Transaction ended!')
+        console.log('[silcserver] Transaction  for creating a new SILC Group Member ended!')
         
         res.status(422); //422 is Unprocessed Entity
         return next(error);
@@ -82,7 +82,9 @@ async function createSILCGroupMember(req, res, next){
 
 /**
  * Partially update the SILCGroup Member details
- * Main outer API for updating a single SILCGroup Member details
+ * 
+ * Main outer API for updating a single SILCGroup Member details.It can also
+ * be used to update the member's SILCGroup
  * @public
  * @example
  * PATCH api/silc_group_members/:id
@@ -132,7 +134,7 @@ async function partialUpdateSILCGroupMember(req, res, next){
         res.status(422); //422 is Unprocessed Entity
         return next(error);
     }
-}
+};
 
 // //GET api/silcgroups/:id
 // exports.getSILCGroup = function(req, res){
@@ -172,24 +174,7 @@ async function partialUpdateSILCGroupMember(req, res, next){
 //     });
 // };
 
-// function formatDate(date_string){
-//     date_string = Date(date_string);
-//     return date_string;
-// }
 
-
-// // Async Await Examples
-// async function endpointHandler(req, res){
-//     try{
-//         var user = await user.findById(req.userId);
-//         var tasks = await tasks.findById(user.taskid);
-//         tasks.completed = true;
-//         await tasks.save();
-//         res.send("Tasks completed");
-//     } catch(error){
-//         res.send(error);
-//     }
-// }
 module.exports = {
     createSILCGroupMember,
     partialUpdateSILCGroupMember
