@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const admin = express();
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const chalk = require('chalk');
@@ -9,6 +10,8 @@ const app_name = require('../../package.json').name;
 const morgan = require('morgan');
 const logger = require('../helpers/logger');
 const strings = require('../helpers/strings');
+const { exec } = require('child_process');
+
 
 mongoose.set('useCreateIndex', true);
 
@@ -16,9 +19,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
 
+
 app.use(morgan('common'));
+
+app.all('/api/*', function(req, res, next){
+  //check if connected to the db
+  console.log("Mongoose connection readyState: ", mongoose.connection.readyState);
+  if(mongoose.connection.readyState === 0){
+    res.status(503).send('Database connection not available');
+  }
+  
+  next();
+})
 //Load routes
-require('../app/app.router')(app, app_name, logger, chalk);
+require('../app/app.router')(app, admin, app_name, logger, chalk);
 
 //Register Generic Error Handler
 app.use(function(err,req,res,next){
@@ -29,6 +43,7 @@ app.use(function(err,req,res,next){
     reason: err.reason
   })
 });
+
 
 const options = {
   reconnectTries: Number.MAX_VALUE,

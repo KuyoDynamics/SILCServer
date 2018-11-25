@@ -5,13 +5,15 @@ let SILCGroupMember = require('../../models/silc/silc_group_member.model');
 
 //GET api/silcgroups
 async  function getAllSILCGroups(req, res, next){
+    let query = req.query;
     console.log('Req.Query: ', req.query);
     try {
-        const query = {
+        // const query = {
 
-        }
-        const silcgroups = await SILCGroup.find(req.query);
-        return res.json(silcgroups)
+        // }
+        const silcgroups = await SILCGroup.find(query);
+        res.status(200).send(silcgroups);
+        return;
     } catch (error) {
         console.log(error);
         return next(error);
