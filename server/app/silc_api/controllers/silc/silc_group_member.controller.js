@@ -1,5 +1,5 @@
-let SILCGroupMember = require('../../models/silc/silc_group_member.model');
-let SILCGroup = require('../../models/silc/silc_group.model');
+import SILCGroupMember, { startSession, findOneAndUpdate, findById } from '../../models/silc/silc_group_member.model';
+import { updateMany } from '../../models/silc/silc_group.model';
 
 /**
  * Create a new SILCGroup Member record
@@ -33,52 +33,52 @@ let SILCGroup = require('../../models/silc/silc_group.model');
  */
 async function createSILCGroupMember(req, res, next){
 
-    const silc_group_member = new SILCGroupMember({
-        silc_groups: req.body.silc_groups,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        middle_name: req.body.middle_name,
-        sex: req.body.sex,
-        phone: req.body.phone,
-        email: req.body.email,
-        identification: req.body.identification
-    });
+	const silc_group_member = new SILCGroupMember({
+		silc_groups: req.body.silc_groups,
+		first_name: req.body.first_name,
+		last_name: req.body.last_name,
+		middle_name: req.body.middle_name,
+		sex: req.body.sex,
+		phone: req.body.phone,
+		email: req.body.email,
+		identification: req.body.identification
+	});
 
-    const session = await SILCGroupMember.startSession();
+	const session = await startSession();
 
-    try {
-        session.startTransaction();
+	try {
+		session.startTransaction();
 
-        const ops = { session };
+		const ops = { session };
 
-        await silc_group_member.validate();
-        console.log('[silcserver] SILC Group Member data fields for ', silc_group_member._id, ' successfully passed validation!');
+		await silc_group_member.validate();
+		console.log('[silcserver] SILC Group Member data fields for ', silc_group_member._id, ' successfully passed validation!');
 
-        await SILCGroup.updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $addToSet: { members: silc_group_member._id }}, ops);
-        console.log('[silcserver] SILC Groups for ', silc_group_member._id, ' were successfully updated!');
+		await updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $addToSet: { members: silc_group_member._id }}, ops);
+		console.log('[silcserver] SILC Groups for ', silc_group_member._id, ' were successfully updated!');
 
-        const result = await silc_group_member.save(ops);
-        console.log('[silcserver] New SILC Group Member with id: ', silc_group_member._id, ' was successfully created!');
+		const result = await silc_group_member.save(ops);
+		console.log('[silcserver] New SILC Group Member with id: ', silc_group_member._id, ' was successfully created!');
 
-        await session.commitTransaction();
-        session.endSession();
+		await session.commitTransaction();
+		session.endSession();
 
-        res.status(201).send({
-            message: "Record created successfully",
-            record: result
-        })
-        return;
-    } catch (error) {
-        await session.abortTransaction();
-        console.log('[silcserver] Transaction for creating a new SILC Group Member aborted!')
+		res.status(201).send({
+			message: 'Record created successfully',
+			record: result
+		});
+		return;
+	} catch (error) {
+		await session.abortTransaction();
+		console.log('[silcserver] Transaction for creating a new SILC Group Member aborted!');
 
-        session.endSession();
-        console.log('[silcserver] Transaction  for creating a new SILC Group Member ended!')
+		session.endSession();
+		console.log('[silcserver] Transaction  for creating a new SILC Group Member ended!');
         
-        res.status(422); //422 is Unprocessed Entity
-        return next(error);
-    }
-};
+		res.status(422); //422 is Unprocessed Entity
+		return next(error);
+	}
+}
 
 /**
  * Partially update the SILCGroup Member details
@@ -98,43 +98,43 @@ async function createSILCGroupMember(req, res, next){
  * @returns {*} Object which can either be an error or updated record
  */
 async function partialUpdateSILCGroupMember(req, res, next){
-    console.log("Params: ", req.params);
-    console.log("Body: ", req.body);
+	console.log('Params: ', req.params);
+	console.log('Body: ', req.body);
 
-    if(Object.keys(req.body).length === 0){
-        res.status(422);
-        return next(new Error('Cannot process empty request body'));
-    }
+	if(Object.keys(req.body).length === 0){
+		res.status(422);
+		return next(new Error('Cannot process empty request body'));
+	}
 
-    const session = await SILCGroupMember.startSession();
+	const session = await startSession();
 
-    try {
-        session.startTransaction();
+	try {
+		session.startTransaction();
 
-        const ops = { session, new:true, runValidators: true, context: 'query' };
-        const result = await SILCGroupMember.findOneAndUpdate({_id: req.params.id}, req.body, ops);
-        if(!result){
-            throw new Error('SILC Group Member record could not be found: ' + req.params.id);
-        }
-        await session.commitTransaction();
-        session.endSession();
+		const ops = { session, new:true, runValidators: true, context: 'query' };
+		const result = await findOneAndUpdate({_id: req.params.id}, req.body, ops);
+		if(!result){
+			throw new Error('SILC Group Member record could not be found: ' + req.params.id);
+		}
+		await session.commitTransaction();
+		session.endSession();
 
-        res.status(200).send({
-            message: "Record updated successfully",
-            record: result
-        })
-        return;
-    } catch (error) {
-        await session.abortTransaction();
-        console.log('[silcserver] Update SILC Group Member Transaction aborted!')
+		res.status(200).send({
+			message: 'Record updated successfully',
+			record: result
+		});
+		return;
+	} catch (error) {
+		await session.abortTransaction();
+		console.log('[silcserver] Update SILC Group Member Transaction aborted!');
 
-        session.endSession();
-        console.log('[silcserver] Update SILC Group Member Transaction ended!')
+		session.endSession();
+		console.log('[silcserver] Update SILC Group Member Transaction ended!');
         
-        res.status(422); //422 is Unprocessed Entity
-        return next(error);
-    }
-};
+		res.status(422); //422 is Unprocessed Entity
+		return next(error);
+	}
+}
 
 /**
  * GET a Single SILCGroup Member by Id
@@ -154,20 +154,22 @@ async function partialUpdateSILCGroupMember(req, res, next){
  * @returns {*} Object which can either be an error or updated record
  */
 function getSILCGroupMember(req, res, next){
-    SILCGroupMember.findById(req.params.id, function(err, silcGroupMember){
-        if(err) {
-            console.log(err);
-            return next(res.json(err));
-        }
-        else {
-            if(!silcGroupMember){
-                return next(res.status(422).json({message: 'Member not found: '+req.params.id}));
-            }
-            return next(res.status(200).json(silcGroupMember));
-        }
+	console.log('req.params: '+ req.params);
+	//console.log('req.params: '+ req.query.toString());
+	findById(req.params.id, function(err, silcGroupMember){
+		if(err) {
+			console.log(err);
+			return next(res.json(err));
+		}
+		else {
+			if(!silcGroupMember){
+				return next(res.status(422).json({message: 'Member not found: '+req.params.id}));
+			}
+			return next(res.status(200).json(silcGroupMember));
+		}
 
-    });
-};
+	});
+}
 
 // //DELETE api/silcgroups/:id
 // exports.deleteSILCGroup = function(req, res){
@@ -194,8 +196,8 @@ function getSILCGroupMember(req, res, next){
 // };
 
 
-module.exports = {
-    createSILCGroupMember,
-    partialUpdateSILCGroupMember,
-    getSILCGroupMember
-}
+export default {
+	createSILCGroupMember,
+	partialUpdateSILCGroupMember,
+	getSILCGroupMember
+};
