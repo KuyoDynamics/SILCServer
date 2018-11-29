@@ -112,18 +112,16 @@ function silcGroupIdExists(v, callback){
 	});
 }
 
-function isIdentificationIdDuplicate(v, type){
-	return SILCGroupMember.findOne({'identification.id_value': v,'identification.id_type': type}, function(err, silc_group_member){
-		if(err){
-			return true;
-		}
-		if(!silc_group_member){
-			return true;
-		}
-		else {
+async function identificationNotDuplicate(v, type){
+	try {
+		let found_records = await SILCGroupMember.find({'identification.id_value': v,'identification.id_type': type});
+		if(found_records){
 			return false;
 		}
-	});
+		return true;
+	} catch (error) {
+		return false;
+	}
 }
 
 function isValidNationalID(national_id){
@@ -141,27 +139,28 @@ function isValidDrivingLicense(driving_license){
 //Pre save hook
 SILCGroupMemberSchema.pre('save', function(next){
     
-	let dup = isIdentificationIdDuplicate(this.identification.id_value, this.identification.id_type);
+	let not_dup = identificationNotDuplicate(this.identification.id_value, this.identification.id_type);
 
-	if(dup){
-		return next(new Error('a member with the same id already exists.'));
+	if(not_dup){
+		return next();
 	}
-	return next();
+	return next(new Error('a member with the same identification already exists.'));
 });
 
 //Pre find hook
 SILCGroupMemberSchema.pre('find', function(next){
-	//this.populate('silc_group')
+	return next();
+
 });
 
 //Pre update hook
 SILCGroupMemberSchema.pre('findOneAndUpdate',  function(next){
-
+	return next();
 });
 
 //Post update hook
 SILCGroupMemberSchema.post('findOneAndUpdate', function(next){
-
+	return next();
 });
 
 //Post updateMany hook

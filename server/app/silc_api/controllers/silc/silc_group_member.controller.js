@@ -1,5 +1,5 @@
-let SILCGroupMember, { startSession, findOneAndUpdate, findById } = require( '../../models/silc/silc_group_member.model');
-let { updateMany } = require('../../models/silc/silc_group.model');
+let SILCGroupMember = require( '../../models/silc/silc_group_member.model');
+let SILCGroup = require('../../models/silc/silc_group.model');
 
 /**
  * Create a new SILCGroup Member record
@@ -44,7 +44,7 @@ async function createSILCGroupMember(req, res, next){
 		identification: req.body.identification
 	});
 
-	const session = await startSession();
+	const session = await SILCGroupMember.startSession();
 
 	try {
 		session.startTransaction();
@@ -54,7 +54,7 @@ async function createSILCGroupMember(req, res, next){
 		await silc_group_member.validate();
 		console.log('[silcserver] SILC Group Member data fields for ', silc_group_member._id, ' successfully passed validation!');
 
-		await updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $addToSet: { members: silc_group_member._id }}, ops);
+		await SILCGroup.updateMany({ _id: { $in: silc_group_member.silc_groups }},{ $addToSet: { members: silc_group_member._id }}, ops);
 		console.log('[silcserver] SILC Groups for ', silc_group_member._id, ' were successfully updated!');
 
 		const result = await silc_group_member.save(ops);
@@ -77,8 +77,8 @@ async function createSILCGroupMember(req, res, next){
         
 		res.status(422); //422 is Unprocessed Entity
 		return next(error);
-	}
-}
+	};
+};
 
 /**
  * Partially update the SILCGroup Member details
@@ -104,15 +104,15 @@ async function partialUpdateSILCGroupMember(req, res, next){
 	if(Object.keys(req.body).length === 0){
 		res.status(422);
 		return next(new Error('Cannot process empty request body'));
-	}
+	};
 
-	const session = await startSession();
+	const session = await SILCGroupMember.startSession();
 
 	try {
 		session.startTransaction();
 
 		const ops = { session, new:true, runValidators: true, context: 'query' };
-		const result = await findOneAndUpdate({_id: req.params.id}, req.body, ops);
+		const result = await SILCGroupMember.findOneAndUpdate({_id: req.params.id}, req.body, ops);
 		if(!result){
 			throw new Error('SILC Group Member record could not be found: ' + req.params.id);
 		}
@@ -133,8 +133,8 @@ async function partialUpdateSILCGroupMember(req, res, next){
         
 		res.status(422); //422 is Unprocessed Entity
 		return next(error);
-	}
-}
+	};
+};
 
 /**
  * GET a Single SILCGroup Member by Id
@@ -156,7 +156,7 @@ async function partialUpdateSILCGroupMember(req, res, next){
 function getSILCGroupMember(req, res, next){
 	console.log('req.params: '+ req.params);
 	//console.log('req.params: '+ req.query.toString());
-	findById(req.params.id, function(err, silcGroupMember){
+	SILCGroupMember.findById(req.params.id, function(err, silcGroupMember){
 		if(err) {
 			console.log(err);
 			return next(res.json(err));
@@ -169,35 +169,42 @@ function getSILCGroupMember(req, res, next){
 		}
 
 	});
-}
-
-// //DELETE api/silcgroups/:id
-// exports.deleteSILCGroup = function(req, res){
-//     SILCGroup.findByIdAndRemove(req.params.id, function(err, silcGroup){
-//         if(err){
-//             console.log(err);
-//             return res.status(500).json({
-//                 message: 'Error Occurred during delete operation',
-//                 error: err,
-//                 id: req.params.id                
-//             });
-//         }
-//         else{
-//             if (!silcGroup) return res.status(404).json({
-//                 message: 'Record Not Found',
-//                 id: req.params.id
-//             })
-//             else return res.status(200).json({
-//                 message: 'Successfully deleted',
-//                 id: silcGroup._id
-//             });
-//         }
-//     });
-// };
-
+};
+/**
+ * GET All SILCGroup Members
+ * 
+ * Main outer API for getting all SILCGroup Member records.It can also
+ * be used to filter out the fields that get returned if passed filter parameters
+ * URL Parameters can also be passed to restrict the result set
+ * @public
+ * @example
+ * GET api/silc_group_members
+ * OR
+ * GET api/silc_group_members/?fields=[first_name,last_name]&active=true
+ * }
+ * @function
+ * @param {*} req incoming http request
+ * @param {*} res http server response
+ * @param {*} next next middleware in the pipeline
+ * @returns {*} Object which represents a collection of members
+ */
+async function getAllSILCGroupMembers(req, res, next){
+	let query = req.query;
+	console.log('req.query '+ req.query);
+	// Extract query params and url parts, field projection
+	try {
+		const silcGroupMembers = await SILCGroupMember.find(query);
+		res.status(200).send(silcGroupMembers);
+		return;
+	} catch (error) {
+		console.log(error);
+		return next(error);
+	}
+};
 
 module.exports = {
 	createSILCGroupMember,
 	partialUpdateSILCGroupMember,
-	getSILCGroupMember
+	getSILCGroupMember,
+	getAllSILCGroupMembers
 };

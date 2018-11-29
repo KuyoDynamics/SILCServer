@@ -14,7 +14,7 @@ async function getAllSILCGroups(req, res, next){
 		console.log(error);
 		return next(error);
 	}
-}
+};
 
 // //GET api/silcgroups/:id
 // exports.getSILCGroup = function(req, res){

@@ -3,9 +3,9 @@ let controller = require('../../controllers/silc/silc_group_member.controller');
 
 router.route('/')
 //Get ALL SILC Group Members
-// .get(controller.getAllSILCGroupMembers)
+	.get(controller.getAllSILCGroupMembers)
 //Add New SILC Group Members
-	.post(controller.createSILCGroupMember); ///api/silc_group_members
+	.post(controller.createSILCGroupMember);
 router.route('/:id')
 	.get(controller.getSILCGroupMember)
 //Update SILC Group Member Record

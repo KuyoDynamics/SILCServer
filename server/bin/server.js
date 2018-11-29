@@ -36,9 +36,8 @@ require('../app/app.router')(app, admin, app_name, logger, chalk);
 app.use(function(err,req,res,next){
 	console.log('[silcserver] Error:', err.message);
 	res.send({
-		status: err.name,
-		message: err.message,
-		reason: err.reason
+		status: err.status,
+		message: err.message
 	});
 });
 
