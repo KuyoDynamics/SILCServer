@@ -3,7 +3,7 @@ let SILCGroup = require('../../models/silc/silc_group.model');
 
 
 //GET api/silcgroups
-async  function getAllSILCGroups(req, res, next){
+async function getAllSILCGroups(req, res, next){
 	let query = req.query;
 	console.log('Req.Query: ', req.query);
 	try {

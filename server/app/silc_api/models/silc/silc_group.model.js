@@ -42,12 +42,13 @@ let SILCGroupSchema = new Schema({
 		alias: 'Archived'
 	},
 	members: {
-		type:
-            [{ 
-            	type: Schema.Types.ObjectId, 
-            	ref: 'SILCGroupMember',
-            	required: true 
-            }],
+		type:[
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'SILCGroupMember',
+				required: true
+			}
+		],
 		required: true,
 		'active':true,
 		validate: {

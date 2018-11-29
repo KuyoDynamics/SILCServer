@@ -1,5 +1,5 @@
 let router = require('express').Router();
-let controller = require('../../controllers/silc/silc_group_member.controller').default;
+let controller = require('../../controllers/silc/silc_group_member.controller');
 
 router.route('/')
 //Get ALL SILC Group Members

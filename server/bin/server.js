@@ -1,15 +1,15 @@
-import {express} from 'express';
-const app = express();
-const admin = express();
-import {dotenv} from 'dotenv';
-import {mongoose} from 'mongoose';
-import {chalk} from 'chalk';
-import {bodyParser} from 'body-parser';
-import {path} from 'path';
-import {name as app_name} from '../../package.json';
-import {morgan} from 'morgan';
-import {logger} from '../helpers/logger';
-import {strings} from '../helpers/strings';
+const express = require('express');
+let app = express();
+let admin = express();
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const chalk = require('chalk');
+const bodyParser = require('body-parser');
+const path = require('path');
+const app_name = require('../../package.json').name;
+const morgan = require('morgan');
+const logger = require( '../helpers/logger');
+const strings = require('../helpers/strings');
 
 mongoose.set('useCreateIndex', true);
 
@@ -30,7 +30,7 @@ app.all('/api/*', function(req, res, next){
 	next();
 });
 //Load routes
-'../app/app.router'(app, admin, app_name, logger, chalk);
+require('../app/app.router')(app, admin, app_name, logger, chalk);
 
 //Register Generic Error Handler
 app.use(function(err,req,res,next){

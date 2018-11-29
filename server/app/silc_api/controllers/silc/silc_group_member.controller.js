@@ -1,5 +1,5 @@
-import SILCGroupMember, { startSession, findOneAndUpdate, findById } from '../../models/silc/silc_group_member.model';
-import { updateMany } from '../../models/silc/silc_group.model';
+let SILCGroupMember, { startSession, findOneAndUpdate, findById } = require( '../../models/silc/silc_group_member.model');
+let { updateMany } = require('../../models/silc/silc_group.model');
 
 /**
  * Create a new SILCGroup Member record
@@ -196,7 +196,7 @@ function getSILCGroupMember(req, res, next){
 // };
 
 
-export default {
+module.exports = {
 	createSILCGroupMember,
 	partialUpdateSILCGroupMember,
 	getSILCGroupMember
