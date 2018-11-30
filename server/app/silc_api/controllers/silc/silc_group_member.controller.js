@@ -153,22 +153,21 @@ async function partialUpdateSILCGroupMember(req, res, next){
  * @param {*} next next middleware in the pipeline
  * @returns {*} Object which can either be an error or updated record
  */
-function getSILCGroupMember(req, res, next){
+async function getSILCGroupMember(req, res, next){
 	console.log('req.params: '+ req.params);
 	//console.log('req.params: '+ req.query.toString());
-	SILCGroupMember.findById(req.params.id, function(err, silcGroupMember){
-		if(err) {
-			console.log(err);
-			return next(res.json(err));
-		}
-		else {
-			if(!silcGroupMember){
-				return next(res.status(422).json({message: 'Member not found: '+req.params.id}));
-			}
-			return next(res.status(200).json(silcGroupMember));
-		}
-
-	});
+	try {
+		let silcGroupMember = await SILCGroupMember.findById(req.params.id);
+		if(!silcGroupMember){
+			res.status(422);
+			return next({message: 'Member not found: '+req.params.id});
+		};
+		res.status(200).send(silcGroupMember);
+		return;
+	} catch (error) {
+		console.log(err);
+		return next(err);
+	};	
 };
 /**
  * GET All SILCGroup Members
