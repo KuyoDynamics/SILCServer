@@ -7,7 +7,8 @@ router.route('/')
 	.get(controller.getAllSILCGroups)
 //Add New SILC Group
 	.post(controller.createSILCGroup);
-router.route('/:id');
+router.route('/:id')
+	.get(controller.getSILCGroup);
 //Get a specific Group
 //.get(validateParam(schemas.idSchema, 'id'), controller.getSILCGroup)
 //Update SILC Group Record

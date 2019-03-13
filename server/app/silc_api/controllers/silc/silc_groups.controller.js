@@ -16,19 +16,18 @@ async function getAllSILCGroups(req, res, next){
 	}
 };
 
-// //GET api/silcgroups/:id
-// exports.getSILCGroup = function(req, res){
-//     SILCGroup.findById(req.params.id, function(err, silcGroup){
-//         if(err) {
-//             console.log(err);
-//             return res.json(err);
-//         }
-//         else {
-//             return res.json(silcGroup);
-//         }
-
-//     });
-// };
+//GET api/silcgroups/:id
+async function getSILCGroup (req, res, next){
+	let group_id = req.params.id;
+	try {
+		const silc_group = await SILCGroup.findById(group_id);
+		res.status(200).send(silc_group);
+		return;
+	} catch (error) {
+		console.log(error);
+		return next(error);
+	}
+};
 
 // //PUT/PATCH api/silcGroup
 // exports.updateSILCGroup = function(req, res){
@@ -127,6 +126,7 @@ async function createSILCGroup(req, res, next){
 
 module.exports = {
 	getAllSILCGroups,
-	createSILCGroup  
+	getSILCGroup,
+	createSILCGroup 
 };
 

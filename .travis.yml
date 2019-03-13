@@ -12,6 +12,6 @@ deploy:
     secure: Kr9aTNzZw9oBpGDgeGDPizNyIwA4eESUN8MAdc6uu4ikrQzpL4/OLVmDhaA0V13lHanfs0+pduBBXTemZ0wc5RPKCHqXirSBtzp4+DjCdrvqBI0ZzUEOaCHA9sTzU/NHYwcGk5NC5ViHpunFyUC3mwEl03JaLTMiisYAOGDi9D/Np5lz7BbG7P0ZGNmfWFvouIlVzaWGUelBZRaFKiIiiI1FLFC89KSUCi4aj59Tsy6jhVoMnLb3F8kNuk53oIUzxmlkUd2hudJdanGPgTNgtqR8fxiSTBwSj4uZi/o0s8E9tu6C5KDzZ4fyt6th+K9fLDDtE8EtYLFJHT4PTy0Gs8tD2W4m2WQ//2pw02RxEcpHvZ2uSYKzZLp2KjscJFg6PrR7C6E5vXF+03VICf7TGObTXCHIy4oXmU8R3YpdnWoaZwjsrgdL40tiI2BamDjr0e3jFjLNbPBSOqKfKIdym0xBRg0tgUYiJHBHwQQNCOc0P0XixacmCPy7UX74Z34P23wNrTIsPoG/z5ECB0qz6+EmhYTMUmWaZg1CxLrmKfkV9+QXRNjkIcDB6H7De35uyFGt/LXznmoqDh6t0gfGA8uq6Jbto9jaU0rUCzUGsPTFSkExDRv0kENqzPNYinKpY3Tl/r93tXMDPoJfd2gwUZTkoRlS8Nb5vDI3zoYdPWk=
   app: silc-server
   on:
-    repo: BantuLab/SILCServer
+    repo: BantuLab/WaterMetreReader
 after_failure:
 - find $HOME ! \( -type d \) -name node-dev -exec ls -lah {} \;
