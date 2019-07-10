@@ -91,6 +91,12 @@ db_connection.on('disconnecting', function(){
 	console.log('[' + app_name + ']', strings.info_messages.disconnecting_from_db_server,
 		chalk.red('X'));
 });
+
+db_connection.on('timeout', function(){
+	console.log('Timeout...');
+});
+
+mongoose.connect(process.env.MONGODB_URL, options);
 app.use(function(err,req,res,next){
 	console.log('[metrereaderserver] Error:', err.message + '\n Stack Trace: ' + err.stack);
 
