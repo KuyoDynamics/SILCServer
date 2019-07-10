@@ -9,7 +9,7 @@ const cors = require('cors');
 let {require_authentication} = require('../helpers/authentication/authentication_manager');
 const strings = require('../helpers/strings');
 const app_name = require('../../package.json').name;
-
+global.app = express();
 mongoose.set('useCreateIndex', true);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,7 +29,7 @@ app.all('/api/*', require_authentication,function(req, res, next){
 	next();
 });
 //Load routes
-require('../app/app.router')(app, admin, app_name, logger, chalk);
+require('../app/app.router')(app);
 const options = {
 	autoReconnect: true,
 	reconnectTries: Number.MAX_VALUE,
