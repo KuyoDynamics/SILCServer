@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-const {isValidEmail,isValidDrivingLicense,identificationNotDuplicate,isValidNationalID,isValidPassportID,silcGroupIdExists, ValidationMessages} = require('../../models/model.validation.helpers');
+const {isValidEmail,isValidDrivingLicense,identificationNotDuplicate,isValidNationalID,isValidPassportID,ValidationMessages} = require('../../models/model.validation.helpers');
 
 let Schema = mongoose.Schema;
 let UserTypeOptions = ['admin','read_only','group_admin'];
@@ -14,21 +14,21 @@ let UserSchema = new Schema({
 		required: true, 
 		minlength: 2, 
 		trim: true,
-		alias: 'First Name' 
+		alias: 'fname' 
 	},
 	middle_name: { 
 		type: String, 
 		required: false, 
 		trim: true,
 		minlength: 2, 
-		alias: 'Middle Name' 
+		alias: 'mname' 
 	},
 	last_name: { 
 		type: String, 
 		required: true, 
 		trim: true,
 		minlength: 2, 
-		alias: 'Last Name' 
+		alias: 'lname' 
 	},    
 	sex: { 
 		type: String, 
@@ -68,17 +68,13 @@ let UserSchema = new Schema({
         type: [{
             type: Schema.Types.ObjectId,
             ref: 'Membership',
-            required: false,
-            validate: {
-                isAsync: true,
-                validator: silcGroupIdExists,
-                message: 'silc_groups field values must be valid existing group ids'
-            }
+            required: false            
         }]
     },
 	user_type: {
         type: String,
-        enum: UserTypeOptions
+		enum: UserTypeOptions,
+		required: true
     }
 });
 
@@ -112,9 +108,23 @@ let IdentificationSchema = new Schema({
 					return false;
 				}
 			},
-			message: 'Invalid Identification number'
+			message: ValidationMessages.invalidNationalIDMsg
 		}
 	}
+}, {autoIndex: false, timestamps: true});
+
+/**
+ * Hooks
+ */
+UserSchema.pre('save', function(next){
+    
+	// let not_dup = identificationNotDuplicate(this.identification.id_value, this.identification.id_type);
+
+	// if(not_dup){
+	// 	return next();
+	// }
+	// return next(new Error('a member with the same identification already exists.'));
+	next();
 });
 
 let User = mongoose.model('User', UserSchema);

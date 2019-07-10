@@ -1,3 +1,13 @@
+const User = require('../models/user/user.model');
+const SILCGroup = require('../models/silc/silc_group.model');
+const Membership = require('../models/silc/membership.model');
+const Loan = require('../models/silc/loan.model');
+const Saving = require('../models/silc/saving.model');
+const ShareOut = require('../models/silc/share_out.model');
+const SocialFund = require('../models/silc/social_fund.model');
+const Fine = require('../models/silc/fine.model');
+const CashBook = require('../models/silc/cash_book.model');
+
 function isValidNationalID(national_id){
 	return /^[0-9]{6}\/[0-9]{2}\/[1,2]{1}$/i.test(national_id);
 }
@@ -27,9 +37,23 @@ async function silcGroupIdExists(v, callback){
     }
 }
 
+async function userIdExists(v, callback){                    
+    try {
+        let user = User.findById(v);
+        if(user){
+            console.log('User found: ', user._id);
+            return true;
+        }
+        return false;
+        
+    } catch (error) {
+        return callback(error, false);
+    }
+}
+
 async function identificationNotDuplicate(v, type){
 	try {
-		let found_records = await SILCGroupMember.find({'identification.id_value': v,'identification.id_type': type});
+		let found_records = await User.find({'identification.id_value': v,'identification.id_type': type});
 		if(found_records){
 			return false;
 		}
@@ -48,7 +72,8 @@ ValidationMessages = {
     invalidGroupIDMsg: 'Invalid Group ID(s).The Group ID(s) must be valid existing group id(s)',
     groupAlreadyExists: 'Group already exists',
     duplicateIdentification: 'A user with same ID already exists',
-    phoneAlreadyExists: 'User with same phone number already exists'
+    phoneAlreadyExists: 'User with same phone number already exists',
+    invalidUserIdMsg: 'Invalid User ID(s).The User ID(s) must be valid existing user id(s)'
 }
 
 module.exports = {
@@ -58,5 +83,6 @@ module.exports = {
     silcGroupIdExists,
     identificationNotDuplicate,
     isValidEmail,
-    ValidationMessages
+    ValidationMessages,
+    userIdExists
 }
