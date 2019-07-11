@@ -2,9 +2,11 @@ let mongoose = require('mongoose');
 const {isValidEmail,isValidDrivingLicense,identificationNotDuplicate,isValidNationalID,isValidPassportID,ValidationMessages} = require('../model_validation_helpers');
 
 let Schema = mongoose.Schema;
-let UserTypeOptions = ['admin','read_only','group_admin'];
+let UserTypeOptions = ['admin','read_only','group_admin','silc_member'];
 let IDTypeOptions = ['national_id','passport_id','driving_license_id'];
+let MembershipStatus=['active','inactive','deactivated'];
 let SexTypeOptions = ['male','female','unknown'];
+const {silcGroupIdExists, userIdExists, ValidationMessages} = require('../model_validation_helpers');
 /**
  * User Schema
  */
@@ -61,15 +63,55 @@ let UserSchema = new Schema({
         country: String
     },
     identification: {
-        type: IdentificationSchema,
+        type: [{
+				id_type: {
+					type: String,
+					enum: IDTypeOptions,
+					lowercase: true,
+					required: true,
+					unique: true
+				},
+				id_value: {
+					type: String,
+					required: true,
+					validate: {
+						validator: function(v) {
+							switch(this.id_type.toString()){
+							case 'national_id':
+								return isValidNationalID(v);
+							case 'passport_id':
+								return isValidPassportID(v);
+							case 'driving_license_id':
+								return isValidDrivingLicense(v);
+							default:
+								return false;
+							}
+						},
+						message: ValidationMessages.invalidNationalIDMsg
+					}
+				}
+		}],
         required: true
     },
     membership: {
         type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Membership',
-            required: false            
-        }]
+			group_id: {
+				type: Schema.Types.ObjectId,
+				ref: 'SILCGroup',
+				required: true,
+				validate: {
+					isAsync: true,
+					validator: silcGroupIdExists,
+					message: ValidationMessages.invalidGroupIDMsg
+				}
+			},
+			status: {
+				type: String,
+				enum: MembershipStatus,
+				required: true
+			}
+		}],
+		required: false
     },
 	user_type: {
         type: String,
@@ -79,55 +121,12 @@ let UserSchema = new Schema({
 });
 
 /**
- * User Identification Schema
- */
-let IdentificationSchema = new Schema({
-	id_type: {
-		type: String,
-		enum: IDTypeOptions,
-		lowercase: true,
-		required: true
-	},
-	id_value: {
-		type: String,
-		required: true,
-		validate: {
-			validator: identificationNotDuplicate,
-			message: ValidationMessages.duplicateIdentification
-        },
-        validate: {
-			validator: function(v) {
-				switch(this.id_type.toString()){
-				case 'national_id':
-					return isValidNationalID(v);
-				case 'passport_id':
-					return isValidPassportID(v);
-				case 'driving_license_id':
-					return isValidDrivingLicense(v);
-				default:
-					return false;
-				}
-			},
-			message: ValidationMessages.invalidNationalIDMsg
-		}
-	}
-}, {autoIndex: false, timestamps: true});
-
-/**
  * Hooks
  */
 UserSchema.pre('save', function(next){
-    
-	// let not_dup = identificationNotDuplicate(this.identification.id_value, this.identification.id_type);
-
-	// if(not_dup){
-	// 	return next();
-	// }
-	// return next(new Error('a member with the same identification already exists.'));
-	next();
+  	next();
 });
 
 let User = mongoose.model('User', UserSchema);
 
 module.exports = User;
-
