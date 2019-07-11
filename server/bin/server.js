@@ -29,7 +29,7 @@ app.all('/api/*', require_authentication,function(req, res, next){
 	next();
 });
 //Load routes
-require('../app/app.router')(app);
+require('../app/app_router');
 const options = {
 	autoReconnect: true,
 	reconnectTries: Number.MAX_VALUE,

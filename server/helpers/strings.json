@@ -8,8 +8,8 @@
     },
     "info_messages": {
         "connected_to_db_server": "Connected to the database server",
-        "connecting_to_db_server": "Connecting to the database server",
-        "disconnecting_from_db_server": "Disconnecting from the database server",
+        "connecting_to_db_server": "Connecting to the database server...",
+        "disconnecting_from_db_server": "Disconnecting from the database server...",
         "connected_to_db_on_port": "Connected to the database server on port ",
         "connected_to_silc_server": "Connected to the SILC Server successfully!",
         "listening_to_silc_server": "Listening on port "

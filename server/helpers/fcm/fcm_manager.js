@@ -2,19 +2,19 @@ const fcm_admin = require('firebase-admin');
 let fcm_service_account;
 
 if(process.env.NODE_ENV === 'TEST'){
-		fcm_service_account = require('../../config/water-meter-reader-a9db4-firebase-adminsdk-2mcki-e8a1ad48cb.json');
+		fcm_service_account = require('../../config/silc-server-firebase-adminsdk-0udek-07333c50db.json');
 }
 
 function fcmInit(){
     return new Promise( async (resolve, reject)=>{
         try {
-                let app = await fcm_admin.initializeApp({
+                let fcm_app = await fcm_admin.initializeApp({
                 credential: fcm_admin.credential.cert(
                     process.env.NODE_ENV === 'TEST' ? fcm_service_account : JSON.parse(process.env.FCM_SERVICE_ACCOUNT)
                     ),
                 databaseURL: process.env.FCM_DATABASE_URL
             });
-            resolve(app);
+            resolve(fcm_app);
         } catch (error) {
             reject(error);
         }
@@ -22,12 +22,12 @@ function fcmInit(){
 }
 
 function subscribeToTopics(registrationTokens, topics){
-    return new Promise(async (resolve, reject)=>{
+    return new Promise( (resolve, reject)=>{
         try {
             let response = [];
-            topics.forEach((topic)=>{
+            topics.forEach(async (topic)=>{
                 response.push(await fcm_admin.messaging().subscribeToTopic(registrationTokens, topic));
-            })
+            });
             resolve(response);
         } catch (error) {
             reject(error);            
