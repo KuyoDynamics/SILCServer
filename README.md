@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/BantuLab/SILCServer.svg?branch=master)](https://travis-ci.org/BantuLab/SILCServer)
-
-[![Stories in Ready](https://github.com/BantuLab/SILCServer/projects/1/SILCServer.png?label=ready&title=Ready)](https://github.com/BantuLab/SILCServer/projects/1)
+<!-- 
+[![Stories in Ready](https://github.com/BantuLab/SILCServer/projects/1/SILCServer.png?label=ready&title=Ready)](https://github.com/BantuLab/SILCServer/projects/1) -->
 
 # SILC Server
 SILCServer is backend service providing APIs and Endpoints for SILC Client Applications. SILC stands for Savings and Internal Lending Communities
