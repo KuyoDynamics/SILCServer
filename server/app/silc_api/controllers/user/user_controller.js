@@ -24,14 +24,20 @@ async function createUser(req, res, next){
     const session = await User.startSession();
     try {
         let new_user = new User({
-            username: req.body.username,
-            password: req.body.password,
             first_name: req.body.first_name,
+            middle_name: req.body.middle_name,
             last_name: req.body.last_name,
             sex: req.body.sex,
-            date_of_birth: req.body.date_of_birth,
+            email: req.body.email,
+            phone: req.body.phone,
+            address: req.body.address,
+            identification: req.body.identification,
+            membership: req.body.membership,
             user_type: req.body.user_type,
-            user_permissions: req.body.user_permissions
+            date_of_birth: req.body.date_of_birth,
+            user_permissions: req.body.user_permissions,
+            username: req.body.username,
+            password: req.body.password,
         });
         session.startTransaction();
 
