@@ -44,6 +44,7 @@ try{
 		dotenv.load({ path: configFile });
 	}
 } catch(error){
+	
 	console.log(strings.error_messages.connection_error, error.message);
 }
 //Initialize FCM
