@@ -1,4 +1,5 @@
 let User =  require('../models/user.model');
+let encryptText = require('../../../../helpers/authentication/text_encryption/text_encryption').encryptText;
 
 //GET /api/users/:id
 async function getUser(req, res, next) {
@@ -23,6 +24,10 @@ async function getUser(req, res, next) {
 async function createUser(req, res, next){
     const session = await User.startSession();
     try {
+        let fcm_tokens = req.body.fcm_tokens;
+        if(fcm_tokens !== undefined){
+            fcm_tokens=fcm_tokens.map(token=>encryptText(token));
+        }
         let new_user = new User({
             first_name: req.body.first_name,
             middle_name: req.body.middle_name,
@@ -38,6 +43,7 @@ async function createUser(req, res, next){
             user_permissions: req.body.user_permissions,
             username: req.body.username,
             password: req.body.password,
+            fcm_tokens: fcm_tokens
         });
         session.startTransaction();
 

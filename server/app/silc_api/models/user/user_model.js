@@ -119,19 +119,21 @@ let UserSchema = new Schema({
 		}],
 		required: false
     },
-	user_type: {
+	user_roles: [{
         type: String,
-		enum: UserTypeOptions,
-		required: true
-	},
+		ref: 'UserRole',
+		required: true,
+		default: ['read_only']
+	}],
 	date_of_birth: {
 		type: String,
 		required: false
 	},
-	user_permissions: [{
-		type: String,
-		unique: true
-	}],
+	// user_permissions: [{
+	// 	type: String,
+	// 	unique: true,
+	// 	default: ['read:users']//read:users,create:users
+	// }],
 	username: {
 		type: String,
 		required: true
