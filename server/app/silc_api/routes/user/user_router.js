@@ -5,6 +5,6 @@ let verify_auth_scope = require('../../../helpers/authentication/jwt_auth_scope_
 router.route('/:id')
     .get(verify_auth_scope(['read:users']), controller.getUser)
 router.route('/')
-    .post(verify_auth_scope(['create:users']), controller.createUser)
+    .post(controller.createUser) //User create should not be authenticated
 
-module.exports = router;    
+module.exports = router;

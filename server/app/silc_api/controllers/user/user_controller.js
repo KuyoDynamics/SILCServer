@@ -40,7 +40,6 @@ async function createUser(req, res, next){
             membership: req.body.membership,
             user_type: req.body.user_type,
             date_of_birth: req.body.date_of_birth,
-            user_permissions: req.body.user_permissions,
             username: req.body.username,
             password: req.body.password,
             fcm_tokens: fcm_tokens

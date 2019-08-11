@@ -129,11 +129,6 @@ let UserSchema = new Schema({
 		type: String,
 		required: false
 	},
-	// user_permissions: [{
-	// 	type: String,
-	// 	unique: true,
-	// 	default: ['read:users']//read:users,create:users
-	// }],
 	username: {
 		type: String,
 		required: true
