@@ -74,9 +74,6 @@ async function createUser(req, res, next){
 		return next(error);
     }
 }
-
-//POST /api/users
-
 module.exports = {
     getUser,
     createUser

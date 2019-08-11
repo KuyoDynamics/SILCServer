@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
-let {require_authentication} = require('../helpers/authentication/authentication_manager');
 const strings = require('../helpers/strings');
 const app_name = require('../../package.json').name;
 global.app = express();
@@ -20,7 +19,16 @@ app.use('*', function(req, res, next){
 	req.user = null;
 	next();
 });
-app.all('/api/*', require_authentication,function(req, res, next){
+//Consider refactoring this code and only apply authentication checks at feature router level
+// app.all('/api/*', require_authentication,function(req, res, next){
+// 	//check if connected to the db
+// 	console.log('Mongoose connection readyState: ', mongoose.connection.readyState);
+// 	if(mongoose.connection.readyState === 0){
+// 		res.status(503).send('Database connection not available');
+// 	}
+// 	next();
+// });
+app.all('/api/*', function(req, res, next){
 	//check if connected to the db
 	console.log('Mongoose connection readyState: ', mongoose.connection.readyState);
 	if(mongoose.connection.readyState === 0){
