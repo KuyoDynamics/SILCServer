@@ -1,4 +1,4 @@
-let controller = require('../controllers/fcm.controller');
+let controller = require('../../controllers/user/login_controller');//Replace with fcm controller when done
 let router = require('express').Router();
 let verify_auth_scope = require('../../../helpers/authentication/jwt_auth_scope_verifier');
 

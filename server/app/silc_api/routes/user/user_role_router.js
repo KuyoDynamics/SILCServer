@@ -1,5 +1,5 @@
 let router = require('express').Router();
-let controller = require('../controllers/user_role_controller');
+let controller = require('../../controllers/user/user_role_controller');
 let verify_auth_scope = require('../../../helpers/authentication/jwt_auth_scope_verifier');
 let {require_authentication} = require('../../../helpers/authentication/authentication_manager');
 

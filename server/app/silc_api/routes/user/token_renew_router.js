@@ -1,4 +1,4 @@
-let controller = require('../controllers/token_renew.controller');
+let controller = require('../../controllers/user/login_controller'); //Replace with token renew controller when done
 
 let router = require('express').Router();
 
