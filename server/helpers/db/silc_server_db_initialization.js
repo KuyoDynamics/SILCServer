@@ -32,6 +32,7 @@ if(!permissions_initialized){
         
         let result = async ()=> await UserRolePermission.insertMany(default_permissions, ops);
         async ()=> await session.commitTransaction();
+        permissions_initialized = true;
         console.log(`${result.length} UserRolePermissions Collection initialized...`);
         session.endSession();
     } catch (error) {
@@ -63,3 +64,9 @@ if(!permissions_initialized){
 //     });
 //     //2. create app admin user
 // }
+
+module.exports = {
+    permissions_initialized,
+    roles_initialized,
+    users_initialized
+}

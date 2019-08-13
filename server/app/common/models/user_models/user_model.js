@@ -1,14 +1,14 @@
 let mongoose = require('mongoose');
 let bcrypt = require('bcrypt');
 
-const {isValidEmail,isValidDrivingLicense,identificationNotDuplicate,isValidNationalID,isValidPassportID,ValidationMessages} = require('../../../silc_api/models/model_validation_helpers');
+const {isValidEmail,isValidDrivingLicense,identificationNotDuplicate,isValidNationalID,isValidPassportID,ValidationMessages} = require('../helpers/model_validation_helpers');
 
 let Schema = mongoose.Schema;
 let UserTypeOptions = ['admin','read_only','group_admin','silc_member'];
 let IDTypeOptions = ['national_id','passport_id','driving_license_id'];
 let MembershipStatus=['active','inactive','deactivated'];
 let SexTypeOptions = ['male','female','unknown'];
-const {silcGroupIdExists, userIdExists, ValidationMessages} = require('../../../silc_api/models/model_validation_helpers');
+const {silcGroupIdExists, userIdExists, ValidationMessages} = require('../helpers/model_validation_helpers');
 
 let SALT_WORK_FACTOR = 10;
 const MAX_LOGIN_ATTEMPTS = 5;

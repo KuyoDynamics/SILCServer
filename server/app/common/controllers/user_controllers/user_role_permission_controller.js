@@ -1,4 +1,4 @@
-let UserRole = require('../../models/user/user_role_model');
+let UserRolePermission = require('../../models/user_models/user_role_permission_model');
 
 //GET /api/user_role_permissions/:id
 async function getUserRolePermission(req, res, next) {

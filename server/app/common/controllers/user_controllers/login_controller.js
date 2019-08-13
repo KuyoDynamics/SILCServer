@@ -1,5 +1,5 @@
-let User = require('../models/user.model');
-const {extract_credentials} = require('../../../helpers/authentication/jwt_auth_header_token_extractor');
+let User = require('../../models/user_models/user_model');
+const {extract_credentials} = require('../../../../helpers/authentication/jwt_auth_header_token_extractor');
 
 async function login(req, res, next) {
     try {

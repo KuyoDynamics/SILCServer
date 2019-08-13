@@ -1,4 +1,4 @@
-let UserRole = require('../../models/user/user_role_model');
+let UserRole = require('../../models/user_models/user_role_model');
 
 //GET /api/user_roles/:id
 async function getUserRole(req, res, next) {

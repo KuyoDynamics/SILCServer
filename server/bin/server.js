@@ -5,7 +5,6 @@ const chalk = require('chalk');
 const bodyParser = require('body-parser');
 const path = require('path');
 const morgan = require('morgan');
-const cors = require('cors');
 const strings = require('../helpers/strings');
 const app_name = require('../../package.json').name;
 global.app = express();
@@ -37,7 +36,7 @@ app.all('/api/*', function(req, res, next){
 	next();
 });
 //Load routes
-require('../app/app_router');
+require('../app/common/routes/app_routes/app_router');
 const options = {
 	autoReconnect: true,
 	reconnectTries: Number.MAX_VALUE,

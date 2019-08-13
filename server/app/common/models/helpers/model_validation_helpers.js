@@ -1,12 +1,5 @@
-const User = require('../user/user_model');
-const SILCGroup = require('./silc/silc_group_model');
-const Membership = require('./silc/membership_model');
-const Loan = require('./silc/loan_model');
-const Saving = require('./silc/saving_model');
-const ShareOut = require('./silc/share_out_model');
-const SocialFund = require('./silc/social_fund_model');
-const Fine = require('./silc/fine_model');
-const CashBook = require('./silc/cash_book_model');
+const User = require('../user_models/user_role_model');
+const SILCGroup = require('../../../silc_api/models/silc/silc_group_model');
 
 function isValidNationalID(national_id){
 	return /^[0-9]{6}\/[0-9]{2}\/[1,2]{1}$/i.test(national_id);

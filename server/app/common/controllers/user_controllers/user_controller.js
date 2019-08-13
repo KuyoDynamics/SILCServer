@@ -1,5 +1,5 @@
-let User =  require('../../models/user/user_model');
-let encryptText = require('../../../../helpers/authentication/text_encryption/text_encryption').encryptText;
+let User =  require('../../models/user_models/user_model');
+let encryptText = require('../../../../helpers/authentication/text_encryption').encryptText;
 
 //GET /api/users/:id
 async function getUser(req, res, next) {

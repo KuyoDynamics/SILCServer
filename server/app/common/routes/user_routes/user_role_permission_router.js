@@ -1,7 +1,7 @@
 let router = require('express').Router();
-let controller = require('../../controllers/user/user_role_permission_controller');
-let verify_auth_scope = require('../../../helpers/authentication/jwt_auth_scope_verifier');
-let {require_authentication} = require('../../../helpers/authentication/authentication_manager');
+let controller = require('../../controllers/user_controllers/user_role_permission_controller');
+let verify_auth_scope = require('../../../../helpers/authentication/jwt_auth_scope_verifier');
+let {require_authentication} = require('../../../../helpers/authentication/authentication_manager');
 
 router.route('/:id')
     .get(require_authentication,verify_auth_scope(['read:user_roles']), controller.getUserRolePermission)
