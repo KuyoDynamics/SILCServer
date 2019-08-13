@@ -1,4 +1,4 @@
-const User = require('./user/user_model');
+const User = require('../user/user_model');
 const SILCGroup = require('./silc/silc_group_model');
 const Membership = require('./silc/membership_model');
 const Loan = require('./silc/loan_model');
