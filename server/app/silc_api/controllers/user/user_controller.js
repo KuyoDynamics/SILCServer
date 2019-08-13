@@ -1,4 +1,4 @@
-let User =  require('../models/user.model');
+let User =  require('../../models/user/user_model');
 let encryptText = require('../../../../helpers/authentication/text_encryption/text_encryption').encryptText;
 
 //GET /api/users/:id
