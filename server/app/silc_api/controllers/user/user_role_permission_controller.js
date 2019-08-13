@@ -4,7 +4,7 @@ let UserRole = require('../../models/user/user_role_model');
 async function getUserRolePermission(req, res, next) {
     try {
         let user_role_permission_id = req.params.id;
-        const user_role_permission =  await UserRolePermission.findById(user_role_id);
+        const user_role_permission =  await UserRolePermission.findById(user_role_permission_id);
         if(user_role_permission === null){
             res.status(404);
             next( new Error('user role permission not found'));
@@ -20,7 +20,7 @@ async function getUserRolePermission(req, res, next) {
 };
 
 //POST /api/user_role_permissions
-async function createUserRolePermissions(req, res, next){
+async function createUserRolePermission(req, res, next){
     const session = await UserRolePermission.startSession();
     try {
         let new_user_role_permission = new UserRolePermission({
@@ -59,5 +59,5 @@ async function createUserRolePermissions(req, res, next){
 }
 module.exports = {
     getUserRolePermission,
-    createUserRolePermissions
+    createUserRolePermission
 }

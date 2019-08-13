@@ -4,8 +4,8 @@ let verify_auth_scope = require('../../../helpers/authentication/jwt_auth_scope_
 let {require_authentication} = require('../../../helpers/authentication/authentication_manager');
 
 router.route('/:id')
-    .get(require_authentication,verify_auth_scope(['read:user_roles']), controller.getUserRole)
+    .get(require_authentication,verify_auth_scope(['read:user_roles']), controller.getUserRolePermission)
 router.route('/')
-    .post(require_authentication,verify_auth_scope(['create:user_roles']), controller.createUserRole)
+    .post(require_authentication,verify_auth_scope(['create:user_roles']), controller.createUserRolePermission)
 
 module.exports = router;
