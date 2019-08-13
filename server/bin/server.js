@@ -7,6 +7,7 @@ const path = require('path');
 const morgan = require('morgan');
 const strings = require('../helpers/strings');
 const app_name = require('../../package.json').name;
+const {dbInitialized, initializeDb} = require('../helpers/db/silc_server_db_initialization');
 global.app = express();
 mongoose.set('useCreateIndex', true);
 app.use(bodyParser.json());
@@ -18,25 +19,17 @@ app.use('*', function(req, res, next){
 	req.user = null;
 	next();
 });
-//Consider refactoring this code and only apply authentication checks at feature router level
-// app.all('/api/*', require_authentication,function(req, res, next){
-// 	//check if connected to the db
-// 	console.log('Mongoose connection readyState: ', mongoose.connection.readyState);
-// 	if(mongoose.connection.readyState === 0){
-// 		res.status(503).send('Database connection not available');
-// 	}
-// 	next();
-// });
+
 app.all('/api/*', function(req, res, next){
-	//check if connected to the db
 	console.log('Mongoose connection readyState: ', mongoose.connection.readyState);
 	if(mongoose.connection.readyState === 0){
 		res.status(503).send('Database connection not available');
 	}
 	next();
 });
-//Load routes
+
 require('../app/common/routes/app_routes/app_router');
+
 const options = {
 	autoReconnect: true,
 	reconnectTries: Number.MAX_VALUE,
@@ -84,6 +77,11 @@ db_connection.on('disconnected', function(){
 db_connection.on('connected', function(){
 	console.log('[' + app_name + ']', strings.info_messages.connected_to_db_server,
 		chalk.green('✓'));
+	if(!dbInitialized()){
+		console.log('Attempting to initialize silc server database...');
+		initializeDb();
+	}	
+
 });
 
 db_connection.on('reconnectFailed', function(){
