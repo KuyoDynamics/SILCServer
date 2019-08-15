@@ -77,9 +77,10 @@ db_connection.on('disconnected', function(){
 db_connection.on('connected', function(){
 	console.log('[' + app_name + ']', strings.info_messages.connected_to_db_server,
 		chalk.green('✓'));
-	if(!dbInitialized()){
+	let initialized = async ()=>await dbInitialized();
+	if(!initialized){
 		console.log('Attempting to initialize silc server database...');
-		initializeDb();
+		async ()=> await initializeDb();
 	}	
 
 });

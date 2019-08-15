@@ -18,7 +18,7 @@ function isValidEmail(email){
 
 async function silcGroupIdExists(v, callback){                    
     try {
-        let silc_group = SILCGroup.findById(v);
+        let silc_group = await SILCGroup.findById(v);
         if(silc_group){
             console.log('SILC Group found: ', silc_group._id);
             return true;
@@ -32,7 +32,7 @@ async function silcGroupIdExists(v, callback){
 
 async function userIdExists(v, callback){                    
     try {
-        let user = User.findById(v);
+        let user = await User.findById(v);
         if(user){
             console.log('User found: ', user._id);
             return true;

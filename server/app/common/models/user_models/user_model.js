@@ -1,10 +1,8 @@
 let mongoose = require('mongoose');
 let bcrypt = require('bcrypt');
-
 const {isValidDrivingLicense,isValidNationalID,isValidPassportID,silcGroupIdExists,identificationNotDuplicate,isValidEmail, ValidationMessages, userIdExists} = require('../helpers/model_validation_helpers');
 
 let Schema = mongoose.Schema;
-let UserTypeOptions = ['admin','read_only','group_admin','silc_member'];
 let IDTypeOptions = ['national_id','passport_id','driving_license_id'];
 let MembershipStatus=['active','inactive','deactivated'];
 let SexTypeOptions = ['male','female','unknown'];
