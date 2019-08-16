@@ -2,18 +2,21 @@ let User = require('../../app/common/models/user_models/user_model');
 let UserRolePermission = require('../../app/common/models/user_models/user_role_permission_model');
 let UserRole = require('../../app/common/models/user_models/user_role_model');
 
-let users_initialized = async ()=> await User.estimatedDocumentCount() > 0 ? true : false;
-let permissions_initialized = async ()=> await UserRolePermission.estimatedDocumentCount() > 0 ? true : false;
-let roles_initialized = async ()=> await UserRole.estimatedDocumentCount() > 0 ? true : false;
+let users_initialized = false;
+let permissions_initialized = false;
+let roles_initialized = false;
 
-function dbInitialized(){
+async function dbInitialized(){
+    users_initialized = await User.estimatedDocumentCount({}) > 0 ? true : false;
+    permissions_initialized = await UserRolePermission.estimatedDocumentCount({}) > 0 ? true : false;
+    roles_initialized = await UserRole.estimatedDocumentCount({}) > 0 ? true : false;
     return users_initialized && permissions_initialized && roles_initialized;
 }
 
-function initializeDb(){
+async function initializeDb(){
     //Permissions
     if(!permissions_initialized){
-        const session = async ()=> {await UserRolePermission.startSession()};
+        const session = await UserRolePermission.startSession();
         const ops = {session};
         try {
             let default_permissions = [
@@ -35,13 +38,13 @@ function initializeDb(){
                 })
             ]
             
-            let result = async ()=> await UserRolePermission.insertMany(default_permissions, ops);
-            async ()=> await session.commitTransaction();
+            let result = await UserRolePermission.insertMany(default_permissions, ops);
+            await session.commitTransaction();
             permissions_initialized = true;
             console.log(`${result.length} UserRolePermissions Collection initialized...`);
             session.endSession();
         } catch (error) {
-            async ()=> await session.abortTransaction();
+            await session.abortTransaction();
             console.log('[silc_server] Initialize UserRolePermissions Transaction aborted!');
             session.endSession();
             console.log(`[silc_server] Initialize UserRolePermissions ended with error: ${error}`);        
