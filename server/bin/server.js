@@ -74,13 +74,13 @@ db_connection.on('disconnected', function(){
 		chalk.red('X'));
 });
 
-db_connection.on('connected', function(){
+db_connection.on('connected', async function(){
 	console.log('[' + app_name + ']', strings.info_messages.connected_to_db_server,
 		chalk.green('✓'));
-	let initialized = dbInitialized();
+	let initialized = await dbInitialized();
 	if(!initialized){
-		console.log('Attempting to initialize silc server database...');
-		initializeDb();
+		console.log('[' + app_name + '] ' + 'Attempting to initialize collections in the silc server database...');
+		await initializeDb();
 	}	
 
 });

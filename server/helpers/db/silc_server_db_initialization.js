@@ -1,3 +1,4 @@
+const app_name = require('../../../package.json').name;
 let User = require('../../app/common/models/user_models/user_model');
 let UserRolePermission = require('../../app/common/models/user_models/user_role_permission_model');
 let UserRole = require('../../app/common/models/user_models/user_role_model');
@@ -10,14 +11,13 @@ async function dbInitialized(){
     users_initialized = await User.estimatedDocumentCount({}) > 0 ? true : false;
     permissions_initialized = await UserRolePermission.estimatedDocumentCount({}) > 0 ? true : false;
     roles_initialized = await UserRole.estimatedDocumentCount({}) > 0 ? true : false;
-    return users_initialized && permissions_initialized && roles_initialized;
+    return (users_initialized === true) && (permissions_initialized === true) && (roles_initialized === true);
 }
 
 async function initializeDb(){
     //Permissions
     if(!permissions_initialized){
         const session = await UserRolePermission.startSession();
-        const ops = {session};
         try {
             let default_permissions = [
                 new UserRolePermission({
@@ -37,18 +37,24 @@ async function initializeDb(){
                     description: "Delete users"
                 })
             ]
-            
+            session.startTransaction();
+            const ops = {session};
             let result = await UserRolePermission.insertMany(default_permissions, ops);
             await session.commitTransaction();
             permissions_initialized = true;
-            console.log(`${result.length} UserRolePermissions Collection initialized...`);
+            console.log('['+app_name+'] '+`${result.length} UserRolePermissions Collections initialized and set as default...`);
             session.endSession();
+            return;
         } catch (error) {
             await session.abortTransaction();
-            console.log('[silc_server] Initialize UserRolePermissions Transaction aborted!');
+            console.log('['+app_name+'] Initialize UserRolePermissions Transaction aborted!');
             session.endSession();
-            console.log(`[silc_server] Initialize UserRolePermissions ended with error: ${error}`);        
+            console.log('['+app_name+'] '+`Initialize UserRolePermissions ended with error: ${error}`); 
+            return;       
         }
+    }
+    else{
+        console.log('['+app_name+'] Skipped User Permissions Collection Initialization!');
     }
 }
 
