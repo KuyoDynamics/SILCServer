@@ -14,6 +14,11 @@ const LOCK_TIME = 2*60*60*1000; //max of 5 attempts resulting in a 2 hour lock
  * User Schema
  */
 let UserSchema = new Schema({
+	is_default_user: {
+		type: Boolean,
+		required: true,
+		default: false		
+	},
     first_name: { 
 		type: String, 
 		required: true, 
@@ -56,7 +61,7 @@ let UserSchema = new Schema({
 		type: String,
 		unique: true,
 		trim: true,
-		required: true
+		required: this.is_default_user
     },
     address: {
         street: String,
@@ -94,7 +99,7 @@ let UserSchema = new Schema({
 					}
 				}
 		}],
-        required: true
+        required: this.is_default_user
     },
     membership: {
         type: [{
@@ -120,7 +125,7 @@ let UserSchema = new Schema({
         type: String,
 		ref: 'UserRole',
 		required: true,
-		default: ['read_only']
+		default: ['read:only']
 	}],
 	date_of_birth: {
 		type: String,
