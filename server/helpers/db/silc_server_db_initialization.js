@@ -17,7 +17,17 @@ async function dbInitialized(){
 async function initializeDb(){
     //Permissions
     if(!permissions_initialized){
-        const session = await UserRolePermission.startSession();
+        await initializePermissions();
+    }
+    else{
+        console.log('['+app_name+'] Skipped User Permissions Collection Initialization!');
+    }
+    //Users
+    //Roles
+}
+
+async function initializePermissions(){
+    const session = await UserRolePermission.startSession();
         try {
             let default_permissions = [
                 new UserRolePermission({
@@ -52,12 +62,44 @@ async function initializeDb(){
             console.log('['+app_name+'] '+`Initialize UserRolePermissions ended with error: ${error}`); 
             return;       
         }
-    }
-    else{
-        console.log('['+app_name+'] Skipped User Permissions Collection Initialization!');
-    }
 }
-
+async function initializeRoles(){
+    const session = await UserRole.startSession();
+        try {
+            let default_roles = [
+                new UserRole({
+                    name: "create:users",
+                    description: "Create users"
+                }),
+                new UserRole({
+                    name: "read:users",
+                    description: "Read users"
+                }),
+                new UserRole({
+                    name: "update:users",
+                    description: "Update users"
+                }),
+                new UserRole({
+                    name: "delete:users",
+                    description: "Delete users"
+                })
+            ]
+            session.startTransaction();
+            const ops = {session};
+            let result = await UserRole.insertMany(default_roles, ops);
+            await session.commitTransaction();
+            permissions_initialized = true;
+            console.log('['+app_name+'] '+`${result.length} UserRoles Collections initialized and set as default roles...`);
+            session.endSession();
+            return;
+        } catch (error) {
+            await session.abortTransaction();
+            console.log('['+app_name+'] Initialize UserRoles Transaction aborted!');
+            session.endSession();
+            console.log('['+app_name+'] '+`Initialize UserRoles ended with error: ${error}`); 
+            return;       
+        }
+}
 
 module.exports = {
     dbInitialized,
