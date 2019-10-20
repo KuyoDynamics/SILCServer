@@ -101,6 +101,10 @@ async function initializeRoles() {
 async function initializeUsers(){
     const session = await User.startSession();
     try {
+        //1. Should the bootstrap query some remote service?
+        //2. Should the bootstrap query SILC Server for stored bootstrap key?
+        //3. Should the bootstrap save the admin email to local storage, then share password with user via email?
+        //4. Password and email should be encrypted
         let default_user = 
             new UserRole({
                 is_default_user: true,
@@ -108,8 +112,8 @@ async function initializeUsers(){
                 middle_name: "",
                 last_name: "Default",
                 sex: "unknown",
-                email: "",
-                phone: "+260974110062",
+                email: "",//set this to email used during bootstrap
+                phone: "",
                 address: "",
                 identification: "",
                 membership: "",
