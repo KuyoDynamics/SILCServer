@@ -7,7 +7,8 @@ const path = require('path');
 const morgan = require('morgan');
 const strings = require('../helpers/strings');
 const app_name = require('../../package.json').name;
-const {dbInitialized, initializeDb} = require('../helpers/db/silc_server_db_initialization');
+const initializeDb = require('../helpers/db/silc_server_db_initialization').initializeDb;
+const dbInitialized = require('../helpers/db/silc_server_db_initialization').dbInitialized;
 global.app = express();
 mongoose.set('useCreateIndex', true);
 app.use(bodyParser.json());
@@ -15,14 +16,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../../public')));
 app.use(morgan('common'));
 //Set req.user to null for each server request
-app.use('*', function(req, res, next){
+app.use('*', function (req, res, next) {
 	req.user = null;
 	next();
 });
 
-app.all('/api/*', function(req, res, next){
+app.all('/api/*', function (req, res, next) {
 	console.log('Mongoose connection readyState: ', mongoose.connection.readyState);
-	if(mongoose.connection.readyState === 0){
+	if (mongoose.connection.readyState === 0) {
 		res.status(503).send('Database connection not available');
 	}
 	next();
@@ -34,77 +35,75 @@ const options = {
 	autoReconnect: true,
 	reconnectTries: Number.MAX_VALUE,
 	useNewUrlParser: true,
-	bufferMaxEntries: 0 ,
-	bufferCommands: false 
+	bufferMaxEntries: 0,
+	bufferCommands: false
 };
 
-try{
+try {
 	if (process.env.NODE_ENV === 'TEST') {
 		var configFile = path.join(__dirname, '../config/.env');
 		dotenv.load({ path: configFile });
 	}
-} catch(error){
-	
+} catch (error) {
+
 	console.log(strings.error_messages.connection_error, error.message);
 }
 //Initialize FCM
 require('../helpers/fcm/fcm_manager').fcmInit()
-	.then((result)=>{
+	.then((result) => {
 		console.log('[' + app_name + ']', `[FCM App Name: ${result.name}] initialized successfully...`);
 	})
-	.catch((error)=>{
-		console.log('[' + app_name + ']', 'FCM Error:',error);
+	.catch((error) => {
+		console.log('[' + app_name + ']', 'FCM Error:', error);
 	});
 
 var db_connection = mongoose.connection;
 db_connection.setMaxListeners(0);
-process.on('SIGINT', function(){
-	db_connection.close(function(){
+process.on('SIGINT', function () {
+	db_connection.close(function () {
 		console.log(strings.error_messages.connection_closed_sigint, chalk.red('X'));
 		process.exit(0);
 	});
 });
 
-db_connection.on('error', (error) =>{
+db_connection.on('error', (error) => {
 	console.error('[' + app_name + ']', strings.error_messages.connection_error + error.message, chalk.red('X'));
 });
 
-db_connection.on('disconnected', function(){
+db_connection.on('disconnected', function () {
 	console.log('[' + app_name + ']', strings.error_messages.connection_closed_db_server,
 		chalk.red('X'));
 });
 
-db_connection.on('connected', async function(){
+db_connection.on('connected', async function () {
 	console.log('[' + app_name + ']', strings.info_messages.connected_to_db_server,
 		chalk.green('✓'));
-	let initialized = await dbInitialized();
-	if(!initialized){
+		let db_boot_strap_done = await dbInitialized();
+	if (db_boot_strap_done === false) {
 		console.log('[' + app_name + '] ' + 'Attempting to initialize collections in the silc server database...');
 		await initializeDb();
-	}	
-
+	}
 });
 
-db_connection.on('reconnectFailed', function(){
+db_connection.on('reconnectFailed', function () {
 	console.log('[' + app_name + ']', strings.error_messages.connection_failed_max_retries, chalk.red('X'));
 });
 
-db_connection.on('connecting', function(){
-	console.log('[' + app_name + ']', strings.info_messages.connecting_to_db_server,
-		chalk.green('✓'));
+db_connection.on('connecting', function () {
+	console.log('[' + app_name + ']', strings.info_messages.connecting_to_db_server);
 });
 
-db_connection.on('disconnecting', function(){
+db_connection.on('disconnecting', function () {
 	console.log('[' + app_name + ']', strings.info_messages.disconnecting_from_db_server,
 		chalk.red('X'));
 });
 
-db_connection.on('timeout', function(){
+db_connection.on('timeout', function () {
 	console.log('Timeout...');
 });
 
 mongoose.connect(process.env.MONGODB_URL, options);
-app.use(function(err,req,res,next){
+app.use(function (err, req, res, next) {
 	console.log('[metrereaderserver] Error:', err.message + '\n Stack Trace: ' + err.stack);
 
 	res.json({
@@ -115,7 +114,7 @@ app.use(function(err,req,res,next){
 });
 let PORT = process.env.PORT || 3000;
 
-let server = app.listen(PORT, function(){
+let server = app.listen(PORT, function () {
 	console.log('[' + app_name + ']', strings.info_messages.connected_to_silc_server + strings.info_messages.listening_to_silc_server + PORT + '!', chalk.green('✓'));
 });
 

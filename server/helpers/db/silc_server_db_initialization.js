@@ -6,9 +6,11 @@ let UserRole = require('../../app/common/models/user_models/user_role_model');
 let users_initialized = usersInitialized();
 let permissions_initialized = permissionsInitialized();
 let roles_initialized = rolesInitialized();
-
+console.log('users_initialized', usersInitialized);
 async function usersInitialized() {
-    return await User.estimatedDocumentCount({}) > 0 ? true : false;
+    let user_count = await User.estimatedDocumentCount({});
+    console.log('User Count is: '+ user_count);
+    return (user_count > 0 );
 }
 async function permissionsInitialized() {
     return await UserRolePermission.estimatedDocumentCount({}) > 0 ? true : false;
@@ -17,7 +19,7 @@ async function rolesInitialized() {
     return await UserRole.estimatedDocumentCount({}) > 0 ? true : false;
 }
 async function dbInitialized() {
-    return (users_initialized && permissions_initialized && roles_initialized);
+    return  (await users_initialized && await permissions_initialized && await roles_initialized);
 }
 
 async function initializePermissions() {
@@ -98,14 +100,14 @@ async function initializeRoles() {
         return;
     }
 }
-async function initializeUsers(){
+async function initializeUsers() {
     const session = await User.startSession();
     try {
         //1. Should the bootstrap query some remote service?
         //2. Should the bootstrap query SILC Server for stored bootstrap key?
         //3. Should the bootstrap save the admin email to local storage, then share password with user via email?
         //4. Password and email should be encrypted
-        let default_user = 
+        let default_user =
             new UserRole({
                 is_default_user: true,
                 first_name: "Super User",
@@ -117,7 +119,7 @@ async function initializeUsers(){
                 address: "",
                 identification: "",
                 membership: "",
-                user_roles: ["create:users","read:users","delete:users", "update:users"],
+                user_roles: ["create:users", "read:users", "delete:users", "update:users"],
                 date_of_birth: "",
                 username: "super", //generate a random password and send it to the admin's email specificied via bootstrap command at startup
                 password: "",
@@ -125,7 +127,7 @@ async function initializeUsers(){
                 lock_until: "",
                 fcm_tockens: ""
             });
-        
+
         session.startTransaction();
         const ops = { session };
         let result = await UserRole.insertOne(default_user, ops);
@@ -143,7 +145,7 @@ async function initializeUsers(){
     }
 }
 
-async function bootStrapPermissions(){
+async function bootStrapPermissions() {
     if (!permissions_initialized) {
         await initializePermissions();
     }
@@ -151,29 +153,30 @@ async function bootStrapPermissions(){
         console.log('[' + app_name + '] Skipped User Permissions Collection Initialization[permissions already initialized]...');
     }
 }
-async function bootStrapRoles(){
-    if(!roles_initialized){
-        if(permissions_initialized){
+async function bootStrapRoles() {
+    if (!roles_initialized) {
+        if (permissions_initialized) {
             await initializeRoles();
         }
-        else{
+        else {
             console.log('[' + app_name + '] Skipped User Role Collection Initialization[permissions not initialized]...');
         }
     }
-    else{
+    else {
         console.log('[' + app_name + '] Skipped User Role Collection Initialization[roles already initialized]...');
     }
 }
-async function bootStrapUsers(){
-    if(!users_initialized){
-        if(permissions_initialized && roles_initialized){
+async function bootStrapUsers() {
+    console.log('users_initialized from bootStrapUsers: '+users_initialized);
+    if (!users_initialized) {
+        if (permissions_initialized && roles_initialized) {
             await initializeUsers();
         }
-        else{
+        else {
             console.log('[' + app_name + '] Skipped User Collection Initialization[permissions or roles not initialized]...');
         }
     }
-    else{
+    else {
         console.log('[' + app_name + '] Skipped User Collection Initialization[users already initialized]...');
     }
 }
