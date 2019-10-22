@@ -164,7 +164,6 @@ async function bootStrapRoles(){
         console.log('[' + app_name + '] Skipped User Role Collection Initialization[roles already initialized]...');
     }
 }
-
 async function bootStrapUsers(){
     if(!users_initialized){
         if(permissions_initialized && roles_initialized){
