@@ -51,10 +51,10 @@ try {
 //Initialize FCM
 require('../helpers/fcm/fcm_manager').fcmInit()
 	.then((result) => {
-		console.log('[' + app_name + ']', `[FCM App Name: ${result.name}] initialized successfully...`);
+		console.log('[' + app_name + '] ', `[Firebase Cloud Messaging App Name: ${result.name}] initialized successfully...`);
 	})
 	.catch((error) => {
-		console.log('[' + app_name + ']', 'FCM Error:', error);
+		console.log('[' + app_name + '] ', 'FCM Error:', error);
 	});
 
 var db_connection = mongoose.connection;
@@ -67,39 +67,39 @@ process.on('SIGINT', function () {
 });
 
 db_connection.on('error', (error, next) => {
-	console.error('[' + app_name + ']', strings.error_messages.connection_error + error.message, chalk.red('X'));
+	console.error('[' + app_name + '] ', strings.error_messages.connection_error + error.message, chalk.red('X'));
 	next(error);
 });
 
 db_connection.on('disconnected', function () {
-	console.log('[' + app_name + ']', strings.error_messages.connection_closed_db_server,
+	console.log('[' + app_name + '] ', strings.error_messages.connection_closed_db_server,
 		chalk.red('X'));
 
 });
 
 db_connection.on('connected', async function () {
-	console.log('[' + app_name + ']', strings.info_messages.connected_to_db_server,
+	console.log('[' + app_name + '] ', strings.info_messages.connected_to_db_server,
 		chalk.green('✓'));
-		let db_boot_strap_done = await dbInitialized();
+	let db_boot_strap_done = await dbInitialized();
 	if (db_boot_strap_done === false) {
 		console.log('[' + app_name + '] ' + 'Attempting to initialize collections in the silc server database...');
 		await initializeDb();
 	}
-	else if(db_boot_strap_done === true){
+	else if (db_boot_strap_done === true) {
 		console.log('[' + app_name + '] [Skipped db initialization] ' + 'Default database collections in the silc server database already initialized...');
 	}
 });
 
 db_connection.on('reconnectFailed', function () {
-	console.log('[' + app_name + ']', strings.error_messages.connection_failed_max_retries, chalk.red('X'));
+	console.log('[' + app_name + '] ', strings.error_messages.connection_failed_max_retries, chalk.red('X'));
 });
 
 db_connection.on('connecting', function () {
-	console.log('[' + app_name + ']', strings.info_messages.connecting_to_db_server);
+	console.log('[' + app_name + '] ', strings.info_messages.connecting_to_db_server);
 });
 
 db_connection.on('disconnecting', function () {
-	console.log('[' + app_name + ']', strings.info_messages.disconnecting_from_db_server,
+	console.log('[' + app_name + '] ', strings.info_messages.disconnecting_from_db_server,
 		chalk.red('X'));
 });
 
@@ -120,7 +120,7 @@ app.use(function (err, req, res, next) {
 let PORT = process.env.PORT || 3000;
 
 let server = app.listen(PORT, function () {
-	console.log('[' + app_name + ']', strings.info_messages.connected_to_silc_server + strings.info_messages.listening_to_silc_server + PORT + '!', chalk.green('✓'));
+	console.log('[' + app_name + '] ', strings.info_messages.connected_to_silc_server + strings.info_messages.listening_to_silc_server + PORT + '!', chalk.green('✓'));
 });
 
 module.exports = server;
