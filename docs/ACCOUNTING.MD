@@ -6,3 +6,10 @@
 6. Cash Book
 7. Share-out
 8. Fines
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
