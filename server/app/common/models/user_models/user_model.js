@@ -30,7 +30,6 @@ let UserSchema = new Schema({
 		type: String, 
 		required: false, 
 		trim: true,
-		minlength: 2, 
 		alias: 'mname' 
 	},
 	last_name: { 
@@ -61,7 +60,7 @@ let UserSchema = new Schema({
 		type: String,
 		unique: true,
 		trim: true,
-		required: this.is_default_user
+		required: false
     },
     address: {
         street: String,
@@ -99,7 +98,7 @@ let UserSchema = new Schema({
 					}
 				}
 		}],
-        required: this.is_default_user
+        required: false
     },
     membership: {
         type: [{

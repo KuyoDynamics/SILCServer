@@ -110,24 +110,22 @@ async function initializeUsers() {
         //3. Should the bootstrap save the admin email to local storage, then share password with user via email?
         //4. Password and email should be encrypted
         let default_user =
-            new UserRole({
+            new User({
                 is_default_user: true,
-                first_name: "Super User",
-                middle_name: "",
-                last_name: "Default",
-                sex: "unknown",
-                email: "",//set this to email used during bootstrap
-                phone: "",
-                address: "",
-                identification: "",
-                membership: "",
+                first_name: 'Super User',
+                middle_name: '',
+                last_name: 'Default',
+                sex: 'unknown',
+                email: 'chaiwa.berian@gmail.com',//set this to email used during bootstrap
+                phone: '',
+                address: '{}',
+                identification: [],
+                membership: [],
                 user_roles: ["create:users", "read:users", "delete:users", "update:users"],
-                date_of_birth: "",
-                username: "super", //generate a random password and send it to the admin's email specificied via bootstrap command at startup
-                password: "",
-                login_attempts: "",
-                lock_until: "",
-                fcm_tockens: ""
+                date_of_birth: '',
+                username: 'super', //generate a random password and send it to the admin's email specificied via bootstrap command at startup
+                password: 'abc123',
+                fcm_tockens: []
             });
 
         session.startTransaction();
@@ -135,7 +133,7 @@ async function initializeUsers() {
         let result = await default_user.save(ops);
         await session.commitTransaction();
         users_initialized = true;
-        console.log('[' + app_name + '] ' + `${result.length} Users Collections initialized with the default user...`);
+        console.log('[' + app_name + '] Users Collection initialized with the default user...');
         session.endSession();
         return;
     } catch (error) {
