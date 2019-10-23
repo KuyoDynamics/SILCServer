@@ -86,7 +86,7 @@ db_connection.on('connected', async function () {
 		await initializeDb();
 	}
 	else if (db_boot_strap_done === true) {
-		console.log('[' + app_name + '] [Skipped db initialization] ' + 'Default database collections in the silc server database already initialized...');
+		console.log('[' + app_name + ']  [Skipped db initialization] ' + 'Default database collections in the silc server database already initialized...');
 	}
 });
 
