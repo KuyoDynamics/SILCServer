@@ -3,23 +3,25 @@ let User = require('../../app/common/models/user_models/user_model');
 let UserRolePermission = require('../../app/common/models/user_models/user_role_permission_model');
 let UserRole = require('../../app/common/models/user_models/user_role_model');
 
-let users_initialized = usersInitialized();
-let permissions_initialized = permissionsInitialized();
-let roles_initialized = rolesInitialized();
-console.log('users_initialized', usersInitialized);
+let users_initialized;
+let permissions_initialized;
+let roles_initialized;
+
 async function usersInitialized() {
     let user_count = await User.estimatedDocumentCount({});
-    console.log('User Count is: '+ user_count);
-    return (user_count > 0 );
+    return (user_count > 0);
 }
 async function permissionsInitialized() {
-    return await UserRolePermission.estimatedDocumentCount({}) > 0 ? true : false;
+    let permission_count = await UserRolePermission.estimatedDocumentCount({});
+    return (permission_count > 0);
 }
 async function rolesInitialized() {
-    return await UserRole.estimatedDocumentCount({}) > 0 ? true : false;
+    let role_count = await UserRole.estimatedDocumentCount({});
+    return (role_count > 0);
 }
 async function dbInitialized() {
-    return  (await users_initialized && await permissions_initialized && await roles_initialized);
+    [users_initialized, permissions_initialized, roles_initialized] = await Promise.all([usersInitialized(), permissionsInitialized(), rolesInitialized()]);
+    return (users_initialized && permissions_initialized && roles_initialized);
 }
 
 async function initializePermissions() {
@@ -130,7 +132,7 @@ async function initializeUsers() {
 
         session.startTransaction();
         const ops = { session };
-        let result = await UserRole.insertOne(default_user, ops);
+        let result = await default_user.save(ops);
         await session.commitTransaction();
         users_initialized = true;
         console.log('[' + app_name + '] ' + `${result.length} Users Collections initialized with the default user...`);
@@ -167,7 +169,7 @@ async function bootStrapRoles() {
     }
 }
 async function bootStrapUsers() {
-    console.log('users_initialized from bootStrapUsers: '+users_initialized);
+    console.log('users_initialized from bootStrapUsers: ' + users_initialized);
     if (!users_initialized) {
         if (permissions_initialized && roles_initialized) {
             await initializeUsers();

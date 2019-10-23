@@ -66,19 +66,22 @@ process.on('SIGINT', function () {
 	});
 });
 
-db_connection.on('error', (error) => {
+db_connection.on('error', (error, next) => {
 	console.error('[' + app_name + ']', strings.error_messages.connection_error + error.message, chalk.red('X'));
+	next(error);
 });
 
 db_connection.on('disconnected', function () {
 	console.log('[' + app_name + ']', strings.error_messages.connection_closed_db_server,
 		chalk.red('X'));
+
 });
 
 db_connection.on('connected', async function () {
 	console.log('[' + app_name + ']', strings.info_messages.connected_to_db_server,
 		chalk.green('✓'));
 		let db_boot_strap_done = await dbInitialized();
+		console.log('db_boot_strap_done', db_boot_strap_done);
 	if (db_boot_strap_done === false) {
 		console.log('[' + app_name + '] ' + 'Attempting to initialize collections in the silc server database...');
 		await initializeDb();
@@ -104,7 +107,7 @@ db_connection.on('timeout', function () {
 
 mongoose.connect(process.env.MONGODB_URL, options);
 app.use(function (err, req, res, next) {
-	console.log('[metrereaderserver] Error:', err.message + '\n Stack Trace: ' + err.stack);
+	console.log('[silcserver] Error:', err.message + '\n Stack Trace: ' + err.stack);
 
 	res.json({
 		status: err.status === null ? 404 : err.status,
