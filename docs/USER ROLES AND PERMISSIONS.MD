@@ -15,3 +15,17 @@ System for Distributed Networks, by CHANG N. ZHANG AND CUNGANG YANG](https://pdf
 13. [Simple, Secure Role Based Access Control(RBAC) For REST APIs by Noa Kuperberg](https://cloudify.co/2016/04/15/simple-secure-role-based-access-control-rest-api-rbac-server-devops-cloud-orchestration.html)
 14. [Blog-High Level Design of Role Based Access Controller, by Richard at Confluence](https://cwiki.apache.org/confluence/display/SQOOP/High+Level+Design+of+Role+Based+Access+Controller)
 15. [Github-Access Control Cheatsheet, by Sheerazali](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Access_Control_Cheat_Sheet.md)
+
+# Role-Based Access Design
+## Example Role Methods:
+1. CreateRole(RoleName): Adds a new role in the system
+2. DeleteRole(RoleName): Deletes a role from the system
+3. AddUserToRole(Username, RoleName): Adds a particular user to a particular role
+4. IsUserInRole(RoleName) or IsUserInRole(Username, RoleName): Checks if the currently logged in or given user is a given role
+5. GetAllRoles(): Gets a list of all roles
+6. GetRolesForUser() or GetRolesForUser(username): Gets a list of all roles for the currently logged in  or given user
+```mermaid
+sequenceDiagram
+  A-->B: Works!
+```
+
