@@ -106,7 +106,157 @@ Users-->AnonymousUsers
 ```mermaid
 graph TD;
 Organization-->Role
+Role-->|role hierachy|Role
+Role-->|permission assignment|Permission
+Role -.- userroleconstraint -.->Subject
+Role -.- roleactivationconstraint -.->Session
+Permission-->Operation
+Subject-->Session
 ```
+## Example RBAC Implementation
+### RBAC GUI
+User Name | Assigned Roles | Options
+--------- | -------------- | -------
+John Smith | Root Access; User Management; General Access | [edit]
+Teresa Appleseed | Marketing Access; General Access | [edit]
+Anonymous | General Access | [edit]
+
+#### Manage Role
+***Name:*** *&nbsp;Root Access*<br>
+***Description***: &nbsp;*Manages access to the RCPs and primary databases for system administrators*<br>
+***Policy:***
+Resource | Effect | Action | Add/Remove
+-------- | ------ | ----------- | ----------
+RCPs Database&caron; | Allow&caron; | UpdateDB; DeleteDBItem| -
+Primary Databases&caron; | Deny&caron; | DeleteDB; | + -
+*<small>Select Resource</small>*&caron; | *<small>Effect</small>*&caron; | *<small>Add an action</small>* | + -
+***SAVE***
+### Defining a role
+- A role should have five semantic components:
+  1. **Name:** A human readable and business friendly way to identify a role
+  2. **Description:** The role's purpose, clearly defined
+  3. **Tags:** Important for managing multiple roles and creating roles to manage the roles
+  4. **Assignments:** Assigning roles to individuals or groups of individuals
+  5. **Plocies:** Specific rules and permission sets assigned to a role
+### Defining a Policy
+-A policy has one primary component:
+1. Array of Strategies
+    - A policy can have may statements
+    - You should be able to save policies and re-use them across multiple roles
+    - in other words, a policy is a collection of specific permission rules
+### Defining a Statement
+- A statement has three components:
+1. Resource
+    - The targeted feature, environment, or operation
+2. Effect
+    - Typically "Allow" or "Deny"
+3. Action
+    - A resource can have many actions, like deleteUser, addUser, modifyUser
+    - These actions should have human readbale names, like "Delete a User" for "deleteUser"
+- Example Statement:
+```
+{
+  "effect": "deny",
+  "resource": [
+    "prod/primaryDB/*"
+  ],
+  "actions": [
+    "deleteDB"
+  ]
+}
+```
+### Mapping Roles
+- You should be able to assign multiple roles to an individual user
+- Ideally, you would have a clear user interface that allows you to build these roles and attach them to individual users or groups of users
+### Avoiding Technical Debt
+- It is very common amongst large companies to acrue hundreds or thousands of roles over time
+- Having an intuitive GUI lets you manage this debt, keep your roles up-to-date, and keep your system secure
+## Multi-Role Relationship Diagram
+```mermaid
+graph TD;
+User1-->|member_of|Healer
+User2-->|member_of|Healer
+User3-->|member_of|Healer
+Healer-->|trans_a|Object1
+Healer-->|trans_b|Object2
+User4-->|member_of|Intern
+User5-->|member_of|Intern
+User6-->|member_of|Intern
+Intern-->|trans_c|Object3
+Intern-->|trans_d|Object4
+Intern-->|member_of|Healer
+User7-->|member_of|Doctor
+User8-->|member_of|Doctor
+User9-->|member_of|Doctor
+Doctor-->|trans_e|Object5
+Doctor-->|trans_f|Object6
+Doctor-->|member_of|Intern
+````
+- By granting membership to the role Doctor, it implies access to all transactions defined by Intern and Healer, as well as those of a Doctor
+- On the other hand, by granting membership to the Intern role, this implies transactions of the Intern and Healer not the Doctor
+- However, by granting membership to the Healer role, this only allows access to those resources allowed under the role Healer
+## Example Implementing RBAC For APIs
+1. **Check Operations on Permissions, Not Roles**
+- Make sure to do it in terms of permissions, which should exist in a first class form in your codebase
+- For example, you never want your code to look like this:
+```
+if(User.role in ['admin','marketer']){
+  ....
+}
+```
+- You would always want your code to look like:
+```
+if(User.can(Permissions.EDIT_REPORT, report)){
+  ....
+}
+```
+- This is because a role allows you to glob together as many permissions as you need
+- The permissions themselves can be extremely granular
+- This allows you to move permissions between roles easily without needing to change your front-end code
+- You can even make custom roles for different customers, based on however they want the product to be accessed, without changing any front-end code
+2. **Positive, Never Negative**
+- There is likely some baseline functionality thate every single user of your application can do
+- For sensitive apps, this might be extremely limited, e.g., logging in and nothing else
+- This is what all users should start with, and nothing more
+- Beyond that baseline, permissions should grant access ***additively***, never ***negatively***
+- Negative permissions cause conflicts if a subject has more than one role, since its unclear which role "wins", and resolving that conflict creates many problems
+3. **Extensions**
+- As your product matures, you may want to icorporate some additional concepts into your permissions system
+## RBAC Example Roles
+1. **Primary Owner**
+- The person who creates the account automatically becomes the **Primary Owner**
+- They have total control over the account and only they can transfer ownership to another user
+- Unlike other roles, there can only be one **Primary Owner** per account
+2. **Owner**
+- Senior managers of your team with responsibility for adding new users, maintaining existing users and billing can be added as owners
+- Owners have almost full control over the account
+- An account can have multiple Owners
+3. **Admin**
+- Technical administrators have complete control over the files in the account
+- They can appoint new users and change existing user roles except ***Owner roles***
+- They cannot view or manage any billing information
+- Admins can lock/unlock folders(Enterprise Accounts Only), making this a powerfull role
+4. **Editor**
+- This role gives access to all day-to-day file management operations(upload, delete, rename, move and copy)
+- Editors are unable to empty the trash, so if files are deleted in error, the ***Owner*** or ***Admin*** user is able to retrieve them for 30 days
+- If a folder has been locked, editrs and contributors cannot delete, rename or overwrite any of its files or subfolders
+5. **Contributor**
+- A limited role, contributors can add content to your account(uploading and creating new folders and files)
+- They cannot move, copy, rename or delete any files folders
+6. **Viewer**
+-A very limited role, viewer can only view files and download them
+7. **Billing**
+-Ideal for finance and accounting dtaff, this role gives complete payment capabilities with minimal file capabilities
+## Example RBAC Implementation
+```mermaid
+graph TD;
+Role-->UserRole-->User
+Role-->Permission-->MenuItem-->Menu
+```
+- Then you can create a view so you don't have to write the joins for the permissions every time
+## Example RBAC System Design For Microservices
+
+
 
 
 
