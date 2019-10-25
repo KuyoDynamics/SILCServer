@@ -1,4 +1,4 @@
-let auth_path = RegExp('/water/api/auth/*', 'i');
+let auth_path = RegExp('/silc/api/auth/*', 'i');
 module.exports = [
     auth_path
 ]

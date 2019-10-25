@@ -4,7 +4,8 @@
   "description": "SILC Server API",
   "main": "server/bin/server.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=TEST nodemon server/bin/server.js"
+    "start": "cross-env NODE_ENV=TEST nodemon server/bin/server.js",
+    "debug": "cross-env NODE_ENV=TEST nodemon --nolazy --inspect-brk=9229 server/bin/server.js"
   },
   "engines": {
     "npm": "^6.1.0",
@@ -37,7 +38,7 @@
     "joi": "^13.7.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
-    "mongoose": "^5.6.4",
+    "mongoose": "^5.7.7",
     "morgan": "^1.9.1",
     "path": "^0.12.7"
   },

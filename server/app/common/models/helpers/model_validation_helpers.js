@@ -1,12 +1,5 @@
-const User = require('./user/user_model');
-const SILCGroup = require('./silc/silc_group_model');
-const Membership = require('./silc/membership_model');
-const Loan = require('./silc/loan_model');
-const Saving = require('./silc/saving_model');
-const ShareOut = require('./silc/share_out_model');
-const SocialFund = require('./silc/social_fund_model');
-const Fine = require('./silc/fine_model');
-const CashBook = require('./silc/cash_book_model');
+const User = require('../user_models/user_role_model');
+const SILCGroup = require('../../../silc_api/models/silc/silc_group_model');
 
 function isValidNationalID(national_id){
 	return /^[0-9]{6}\/[0-9]{2}\/[1,2]{1}$/i.test(national_id);
@@ -25,7 +18,7 @@ function isValidEmail(email){
 
 async function silcGroupIdExists(v, callback){                    
     try {
-        let silc_group = SILCGroup.findById(v);
+        let silc_group = await SILCGroup.findById(v);
         if(silc_group){
             console.log('SILC Group found: ', silc_group._id);
             return true;
@@ -39,7 +32,7 @@ async function silcGroupIdExists(v, callback){
 
 async function userIdExists(v, callback){                    
     try {
-        let user = User.findById(v);
+        let user = await User.findById(v);
         if(user){
             console.log('User found: ', user._id);
             return true;

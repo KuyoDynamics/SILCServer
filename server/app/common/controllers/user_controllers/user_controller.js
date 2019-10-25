@@ -1,4 +1,5 @@
-let User =  require('../models/user.model');
+let User =  require('../../models/user_models/user_model');
+let encryptText = require('../../../../helpers/authentication/text_encryption').encryptText;
 
 //GET /api/users/:id
 async function getUser(req, res, next) {
@@ -23,15 +24,25 @@ async function getUser(req, res, next) {
 async function createUser(req, res, next){
     const session = await User.startSession();
     try {
+        let fcm_tokens = req.body.fcm_tokens;
+        if(fcm_tokens !== undefined){
+            fcm_tokens=fcm_tokens.map(token=>encryptText(token));
+        }
         let new_user = new User({
-            username: req.body.username,
-            password: req.body.password,
             first_name: req.body.first_name,
+            middle_name: req.body.middle_name,
             last_name: req.body.last_name,
             sex: req.body.sex,
-            date_of_birth: req.body.date_of_birth,
+            email: req.body.email,
+            phone: req.body.phone,
+            address: req.body.address,
+            identification: req.body.identification,
+            membership: req.body.membership,
             user_type: req.body.user_type,
-            user_permissions: req.body.user_permissions
+            date_of_birth: req.body.date_of_birth,
+            username: req.body.username,
+            password: req.body.password,
+            fcm_tokens: fcm_tokens
         });
         session.startTransaction();
 
@@ -63,9 +74,6 @@ async function createUser(req, res, next){
 		return next(error);
     }
 }
-
-//POST /api/users
-
 module.exports = {
     getUser,
     createUser
