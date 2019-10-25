@@ -255,9 +255,185 @@ Role-->Permission-->MenuItem-->Menu
 ```
 - Then you can create a view so you don't have to write the joins for the permissions every time
 ## Example RBAC System Design For Microservices
+- The model is built on a hierarchical relational manner with the Role group forming the top level.
+- Permissions required to perform a certain role ( example: vendor, user, subscriber, admin) etc. are grouped under appropriate roles. 
+- A role group can contain one or more roles under it. 
+- This mean that, role-groups inherit combined permissions of all roles under it. 
+- Permissions can be further controller by modules if needed.
+```mermaid
+graph LR;
+AuthServer-->TokenStore
+AuthServer-->UserStore&RBACMetadataStore
+ApiGateway-->TokenStore
+ApiGateway-->|response|LocalStorage
+LocalStorage-->|request|ApiGateway
+ApiGateway-->|periodically poll & refresh Role group & permissions cache in gateway from source|LocalCache
+LocalCache-->AuthServer
+ApiGateway-->InventoryService
+ApiGateway-->SubscriptionService
+ApiGateway-->UserService
+ApiGateway-->ReportingService
+subgraph MicroServices Cluster
+InventoryService
+SubscriptionService
+UserService
+ReportingService
+end
+```
+***Notes:*** <br>
+1. Role group assignments are done during user login and role group is associated with the token and stored in the store
+2. API gateway has its own cache of the role-group and permissions metadata. The Role-group information in the token store is used to derive permissions
+3. API gateway can route requests to appropriate microservices/modules and also send appropriate permissions through header to these devices
+4. The microservice will evaluate the permissions to see what the user has access to and not
+5. Clients can cache the user permissions & initial HASH during login for any UI treatment. Server send a HASH of user permissions to client as part of every response. A change in permission on server side will result in a different HASH being sent from the server.
+## APPROACH
+1. A dedicated set of database tables to hold the role groups, roles and permissions relationships. 
+- One service will be responsible for retrieving permissions for a given list of role groups.
 
+```mermaid
+classDiagram
+  Roles --|> RoleGroupsRoles
+  RoleGroupsRoles <|-- RoleGroups
+  Roles --|> RolesPermissions
+  Permissions --|> RolesPermissions
+  Permissions --|> PermissionsOperations
+  Operations --|> PermissionsOperations
+  Modules --|> ModulesPermissions
+  Permissions --|> ModulesPermissions
 
+  class Permissions{
+    -id int
+    -name String
+    +getId()
+    +setId()
+  }
+  class Operations{
+    -id int
+    -name String
+    +getId()
+    +setId()
+  }
+  class PermissionsOperations{
+    -id int
+    -permission_id int
+    -operations_id int
+    +setId()
+    +getId()
+  }
+  class Modules{
+    -id int
+    -name String
+    +setId()
+    +getId()
+  }
+  class ModulesPermissions{
+    -id int
+    -modules_id int
+    -permissions_id int
+    +setId()
+    +getId()
+  }
+  class Roles{
+    -id int
+    -name String
+    +setId()
+    +getId()
+  }
+  class RoleGroupsRoles{
+    -id int
+    -role_groups_id int
+    -role_id int
+    +setId()
+    +getId()
+  }
+  class RoleGroups{
+    -id int
+    -name String
+  }
+  class RolesPermissions{
+    -id int
+    -name String
+    -roles_id int
+    -permissions_id
+    +getId()
+    +setId()
+  }
+```
+2. Which user gets what role group business logic will be encapsulated in the Auth Server. 
+- User information will be evaluated during login to derive the role group that needs to be assigned. 
+- The role group will be attached to the tokens generated as part of OAuth2 process.
 
+3. The API gateway validates the user tokens and invokes the underlying micro-service API's. 
+- The API gateway will have a local cache of map of role groups and associated permission. 
+- This cache will be periodically refresh by reaching out to Auth Server in the background. 
+- This refresh ensures that the API gateway always has access to any permission changes made by the RBAC Admin in the metadata system.
+
+4. The API gateway lookup the user token, extracts the user details and assigned role groups. 
+- It then derives the associated permissions from the cached data and then sends down the permission to the micro-services as part of enriched request headers.
+
+5. All microservices can use a common library to evaluate if "READ" or "EXECUTE" permissions are available to perform a certain action. 
+- The presence or absence of the permission will control the API response behavior.
+
+6. The clients can cache the list of permissions available to the user to control UI treatment and behavior. 
+- Permission SYNC between the server and the client can be triggered when the HASH of permissions cached on the client doing login flow turns out to be different from the permission HASH that is sent by the clients as part of every API response.
+### Below are some example metadata for the RBAC system.
+#### ROLE_GROUPS
+ Id | Name
+ -- | ----
+ 1 | Subscriber
+ 2 | NON_SUBSCRIBER
+ #### ROLES
+ Id | Name
+ -- | ----
+ 1 | Profile
+ 2 | Reporting
+ #### ACTIONS
+ Id | Name
+ -- | ----
+ 1 | View
+ 2 | Execute
+ #### OPERATIONS
+ Id | Name
+ -- | ----
+ 1 | USER_PROFILE
+ 2 | EXPENSE_REPORT
+ 3 | INVENTORY_LIST
+ #### PERMISSIONS
+ Id | Name
+ -- | ----
+ 1 | VIEW_USER_PROFILE
+ 2 | EXECUTE_EXPENSE_REPORT
+ 3 | VIEW_INVENTORY_LIST
+ #### MODULES
+ Id | Name
+ -- | ----
+ 1 | PROFILE
+ 2 | REPORTS
+ 3 | SUBSCRIPTION
+
+ ## High Level Design of Role Based Access Controller, As Used in Sqoop 2
+ ### Problem
+ - Sqoop 2 needs a pluggable role based access controller (RBAC), which is responsible for the authorization to Sqoop 2 resources, such as server, connector, link, job, etc.
+ ### Basic Idea
+ - The access controller is pluggable
+ - Set controller class in sqoop.properties
+ - The default implement in Sqoop 2 could be a FAKE controller (always return true)
+- The access controller class could be implemented by other controller framework, such as Sentry
+Connector
+### Resource, actions and rules
+Server has three children: Connector, Link, Job.
+
+- It is a hierarchy mode. 
+- If a user has the privilege of {server, all}, then he/she has all privileges of {connector, all}, {link, all} and {job, all}.
+- If a user has the privilege of {job, all}, then he/she has both privileges of {job, read} and {job, write}.
+- If a user want to create a link, then he/she need to have the privilege of {server, create}
+
+Resource | Global Namespace
+-------- | ----------------
+Server | <li>All</li><li>Read</li><li>Write</li>
+Connector | <li>All</li><li>Read</li>
+Link | <li>All</li><li>Read</li><li>Write</li>
+Job | <li>All</li><li>Read</li><li>Write</li>
 
 
 
