@@ -257,7 +257,9 @@ if(User.can(Permissions.EDIT_REPORT, report)){
 ```mermaid
 graph TD;
 Role-->UserRole-->User
-Role-->Permission-->MenuItem-->Menu
+Role-->Permission
+Permission-->MenuItem
+MenuItem-->Menu
 ```
 - Then you can create a view so you don't have to write the joins for the permissions every time
 ## Example RBAC System Design For Microservices
@@ -497,7 +499,8 @@ Link-->Privilege
 Job-->Privilege
 Submission-->Privilege
 subgraph RBAC
-  RoleUserGroup-->Role-->Privilege
+  RoleUserGroup-->Role
+  Role-->Privilege
 end
 subgraph From Linux
   Username
