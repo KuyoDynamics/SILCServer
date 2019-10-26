@@ -316,12 +316,14 @@ classDiagram
     +getId()
     +setId()
   }
+  
   class Operations{
     -int id 
     -String name 
     +getId()
     +setId()
   }
+
   class PermissionsOperations{
     -int id
     -int permission_id
@@ -329,12 +331,14 @@ classDiagram
     +setId()
     +getId()
   }
+
   class Modules{
     -int id
     -String name
     +setId()
     +getId()
   }
+
   class ModulesPermissions{
     -int id
     -int modules_id
@@ -342,12 +346,14 @@ classDiagram
     +setId()
     +getId()
   }
+
   class Roles{
     -int id
     -String name
     +setId()
     +getId()
   }
+
   class RoleGroupsRoles{
     -int id
     -int role_groups_id
@@ -355,10 +361,12 @@ classDiagram
     +setId()
     +getId()
   }
+
   class RoleGroups{
     -int id
     -String name
   }
+
   class RolesPermissions{
     -int id
     -String name
@@ -367,7 +375,9 @@ classDiagram
     +getId()
     +setId()
   }
+
 ```
+
 2. Which user gets what role group business logic will be encapsulated in the Auth Server. 
 - User information will be evaluated during login to derive the role group that needs to be assigned. 
 - The role group will be attached to the tokens generated as part of OAuth2 process.
