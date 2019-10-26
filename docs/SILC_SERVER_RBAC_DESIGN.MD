@@ -8,7 +8,7 @@ graph TD;
     Role-->|assigned to|User
     UserGroup-->|consists of|User
 ```
-# SILC Server RBAC Entity Description
+## SILC Server RBAC Entity Description
 1. **Role Entity** 
 
     Property | Description | Data Type
