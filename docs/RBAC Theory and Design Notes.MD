@@ -109,8 +109,8 @@ graph TD;
 Organization-->Role
 Role-->|role hierachy|Role
 Role-->|permission assignment|Permission
-Role -.- userroleconstraint -.->Subject
-Role -.- roleactivationconstraint -.->Session
+Role -.- userroleconstraint -.-> Subject
+Role -.- roleactivationconstraint -.-> Session
 Permission-->Operation
 Subject-->Session
 ```
