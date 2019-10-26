@@ -15,6 +15,7 @@ System for Distributed Networks, by CHANG N. ZHANG AND CUNGANG YANG](https://pdf
 13. [Simple, Secure Role Based Access Control(RBAC) For REST APIs by Noa Kuperberg](https://cloudify.co/2016/04/15/simple-secure-role-based-access-control-rest-api-rbac-server-devops-cloud-orchestration.html)
 14. [Blog-High Level Design of Role Based Access Controller, by Richard at Confluence](https://cwiki.apache.org/confluence/display/SQOOP/High+Level+Design+of+Role+Based+Access+Controller)
 15. [Github-Access Control Cheatsheet, by Sheerazali](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Access_Control_Cheat_Sheet.md)
+16. [HTML Character Entity Reference Chart](https://dev.w3.org/html5/html-author/charref)
 
 # Role-Based Access Design
 ## Example Role Methods:
@@ -382,34 +383,35 @@ classDiagram
  -- | ----
  1 | Subscriber
  2 | NON_SUBSCRIBER
- #### ROLES
- Id | Name
- -- | ----
- 1 | Profile
- 2 | Reporting
- #### ACTIONS
- Id | Name
- -- | ----
- 1 | View
- 2 | Execute
- #### OPERATIONS
- Id | Name
- -- | ----
- 1 | USER_PROFILE
- 2 | EXPENSE_REPORT
- 3 | INVENTORY_LIST
- #### PERMISSIONS
- Id | Name
- -- | ----
- 1 | VIEW_USER_PROFILE
- 2 | EXECUTE_EXPENSE_REPORT
- 3 | VIEW_INVENTORY_LIST
- #### MODULES
- Id | Name
- -- | ----
- 1 | PROFILE
- 2 | REPORTS
- 3 | SUBSCRIPTION
+#### ROLES
+Id | Name
+-- | ----
+1 | Profile
+2 | Reporting
+#### ACTIONS
+Id | Name
+-- | ----
+1 | View
+2 | Execute
+
+#### OPERATIONS
+Id | Name
+-- | ----
+1 | USER_PROFILE
+2 | EXPENSE_REPORT
+3 | INVENTORY_LIST
+#### PERMISSIONS
+Id | Name
+-- | ----
+1 | VIEW_USER_PROFILE
+2 | EXECUTE_EXPENSE_REPORT
+3 | VIEW_INVENTORY_LIST
+#### MODULES
+Id | Name
+-- | ----
+1 | PROFILE
+2 | REPORTS
+3 | SUBSCRIPTION
 
  ## High Level Design of Role Based Access Controller, As Used in Sqoop 2
  ### Problem
@@ -418,15 +420,15 @@ classDiagram
  - The access controller is pluggable
  - Set controller class in sqoop.properties
  - The default implement in Sqoop 2 could be a FAKE controller (always return true)
-- The access controller class could be implemented by other controller framework, such as Sentry
+ - The access controller class could be implemented by other controller framework, such as Sentry
 Connector
-### Resource, actions and rules
+### Resources, actions and rules
 Server has three children: Connector, Link, Job.
 
 - It is a hierarchy mode. 
 - If a user has the privilege of {server, all}, then he/she has all privileges of {connector, all}, {link, all} and {job, all}.
 - If a user has the privilege of {job, all}, then he/she has both privileges of {job, read} and {job, write}.
-- If a user want to create a link, then he/she need to have the privilege of {server, create}
+- If a user wants to create a link, then he/she needs to have the privilege of {server, create}
 
 Resource | Global Namespace
 -------- | ----------------
@@ -435,5 +437,98 @@ Connector | <li>All</li><li>Read</li>
 Link | <li>All</li><li>Read</li><li>Write</li>
 Job | <li>All</li><li>Read</li><li>Write</li>
 
+Action | Privilege Needed
+------ | ----------------
+show connector | <li>connector read</li>
+show link | <li>link read</li>
+create link | <li>server create</li><li>connector read</li>
+update link | <li>link write</li><li>connector read</li>
+delete link | <li>link write</li>
+enable link | <li>link write</li>
+show job | <li>job read</li>
+create job | <li>both links read</li>
+update job | <li>job write</li><li>both links read</li>
+delete job | <li>job write</li>
+enable job | <li>job write</li>
+disable job | <li>job write</li>
+start job | <li>job write</li>
+stop job | <li>job write</li>
+show submission | <li>job read</li>
 
-
+## Authorization Framework
+- Restful call API is handled by `org.apache.sqoop.handler.AuthorizationEngine.java in sqoop-server`
+- POST /authorization/roles/create
+  - Create new role with {name}
+- DELETE /authorization/role/{role-name}
+- GET /authorization/roles
+  - Show all roles
+- GET /authorization/principals?role_name={name}
+  - Show all principals in role with {name}
+- GET /authorization/roles?principal_type={type}&principal_name={name}
+Show all roles in principal with {name, type}
+- PUT /authorization/roles/grant
+  - Grant a role to a user/group/role
+  - PUT data of JsonObject role(name) and principal (name, type)
+- PUT /authorization/roles/revoke
+  - Revoke a role to a user/group/role
+  - PUT data of JsonObject role(name) and principal (name, type)
+- PUT /authorization/privileges/grant
+  - Grant a privilege to a principal
+  - PUT data of JsonObject principal(name, type) and privilege (resource-name, resource-type, action, with-grant-option)
+- PUT /authorization/privileges/revoke
+  - Revoke a privilege to a principal
+  - PUT data of JsonObject principal(name, type) and privilege (resource-name, resource-type, action, with-grant-option)
+  - If privilege is null, then revoke all privileges for principal(name, type)
+- GET /authorization/privileges?principal_type={type}&principal_name={name}&resource_type={type}&resource_name={name}
+  - Show all privileges in principal with {name, type} and resource with {resource-name, resource-type}
+  - If resource is null, then show all privileges in principal with {name, type}
+### Database Design
+```mermaid
+graph RL;
+Username-->RoleUserGroup
+Groupname-->RoleUserGroup
+Connector-->Privilege
+Link-->Privilege
+Job-->Privilege
+Submission-->Privilege
+subgraph RBAC
+  RoleUserGroup-->Role-->Privilege
+end
+subgraph From Linux
+  Username
+  Groupname
+end
+subgraph Existing Sqoop Db
+  Connector
+  Link
+  Job
+  Submission
+end
+```
+- Role table
+  - Id
+  - Name
+  - Comment
+    - Role name could be admin, developer, user, etc.
+- Role_User_Group table
+  - Id
+  - Role_id
+  - User_name
+  - Group_name
+  - Comment
+    - The information of user and group comes from Linux or LDAP etc.
+    - Only one of user name and group name is set. If user name is set and leave group name empty, it means that this user has this rule. If group name is set and leave user name empty, it means that all users in this group has this rule.
+    - One user/group could have one or multiple roles.
+- Privilege table
+  - Id
+  - Role_id
+  - Resource_id
+  - Resource_type
+  - Action_type
+  - Comment
+    - Resource type could be the existing resource table, such as connector, link, job, etc.
+    - Resource type could be added in the future, say config etc.
+    - If resource_id is 0, it means all resource of this type, ie. resource_id=0 and resource_type=link means all links.
+    - Use resource id and resource type to identify the resource, ie. resource_id=1 and resource_type=link means the resource of “select * from link where id =1”.
+    - Action type could be read, create, update, delete, use etc.
+- Accordingly, MRole, MRoleUserGroup and MPrivilege classes are added into package org.apache.sqoop.model.
