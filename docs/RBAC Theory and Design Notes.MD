@@ -128,12 +128,15 @@ Anonymous | General Access | [edit]
 ***Name:*** *&nbsp;Root Access*<br>
 ***Description***: &nbsp;*Manages access to the RCPs and primary databases for system administrators*<br>
 ***Policy:***
+
 Resource | Effect | Action | Add/Remove
 -------- | ------ | ----------- | ----------
 RCPs Database&caron; | Allow&caron; | UpdateDB; DeleteDBItem| -
 Primary Databases&caron; | Deny&caron; | DeleteDB; | + -
 *<small>Select Resource</small>*&caron; | *<small>Effect</small>*&caron; | *<small>Add an action</small>* | + -
+
 ***SAVE***
+
 ### Defining a role
 - A role should have five semantic components:
   1. **Name:** A human readable and business friendly way to identify a role
