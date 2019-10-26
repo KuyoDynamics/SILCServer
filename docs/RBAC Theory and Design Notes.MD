@@ -311,59 +311,59 @@ classDiagram
   Permissions --|> ModulesPermissions
 
   class Permissions{
-    -id int
-    -name String
+    -int id
+    -String name 
     +getId()
     +setId()
   }
   class Operations{
-    -id int
-    -name String
+    -int id 
+    -String name 
     +getId()
     +setId()
   }
   class PermissionsOperations{
-    -id int
-    -permission_id int
-    -operations_id int
+    -int id
+    -int permission_id
+    -int operations_id
     +setId()
     +getId()
   }
   class Modules{
-    -id int
-    -name String
+    -int id
+    -String name
     +setId()
     +getId()
   }
   class ModulesPermissions{
-    -id int
-    -modules_id int
-    -permissions_id int
+    -int id
+    -int modules_id
+    -int permissions_id
     +setId()
     +getId()
   }
   class Roles{
-    -id int
-    -name String
+    -int id
+    -String name
     +setId()
     +getId()
   }
   class RoleGroupsRoles{
-    -id int
-    -role_groups_id int
-    -role_id int
+    -int id
+    -int role_groups_id
+    -int role_id
     +setId()
     +getId()
   }
   class RoleGroups{
-    -id int
-    -name String
+    -int id
+    -String name
   }
   class RolesPermissions{
-    -id int
-    -name String
-    -roles_id int
-    -permissions_id
+    -int id
+    -String name
+    -int roles_id
+    -int permissions_id
     +getId()
     +setId()
   }
