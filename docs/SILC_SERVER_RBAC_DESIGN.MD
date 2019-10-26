@@ -37,6 +37,10 @@ graph TD;
     description | User friendly description of the resource | String | Can be NULL
     uri | A uri/url to a resource(path to endpoint) | String | NotNull
 
-
+```plantuml
+    @startuml
+        Role "*" *-- "*" User
+    @enduml
+```
 
 
