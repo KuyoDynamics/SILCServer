@@ -256,7 +256,8 @@ if(User.can(Permissions.EDIT_REPORT, report)){
 ## Example RBAC Implementation
 ```mermaid
 graph TD;
-Role-->UserRole-->User
+Role-->UserRole
+UserRole-->User
 Role-->Permission
 Permission-->MenuItem
 MenuItem-->Menu
