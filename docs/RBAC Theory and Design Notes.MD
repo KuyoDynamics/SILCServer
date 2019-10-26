@@ -111,7 +111,8 @@ Role-->|role hierachy|Role
 Role-->|permission assignment|Permission
 Role -.- userroleconstraint
 userroleconstraint -.-> Subject
-Role -.- roleactivationconstraint -.-> Session
+Role -.- roleactivationconstraint
+roleactivationconstraint -.-> Session
 Permission-->Operation
 Subject-->Session
 ```
