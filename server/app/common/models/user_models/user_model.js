@@ -98,7 +98,7 @@ let UserSchema = new Schema({
 					}
 				}
 		}],
-        required: false
+        required: true
     },
     membership: {
         type: [{
