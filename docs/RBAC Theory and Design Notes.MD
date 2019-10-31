@@ -603,23 +603,9 @@ Resource | Automated processes
 7. Virtual Machine Contributor
 8. Reader Support Tickets
 9. Virtual Machine Operator
-```
-Contributor{
-  "Actions": [
-    "*"
-  ],
-  "NotActions": [
-    "Authorization/*/Delete",
-    "Authorization/*/Write",
-    "Authorization/elevateAccess/Action"
-  ],
-  "DataActions": [],
-  "NotDataActions: [],
-  "AssignableScopes": [
-    "/"
-  ]
-} 
-```
+
+- See diagram:
+<img src="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/overview/rbac-role-definition.png">
 - Azure includes several built-in roles that you can use. The following lists four fundamental built-in roles. The first three apply to all resource types.
 
 - **Owner** - Has full access to all resources including the right to delegate access to others.
@@ -658,4 +644,78 @@ Scope:
 - The following diagram shows an example of a role assignment. 
 - In this example, the Marketing group has been assigned the Contributor role for the pharma-sales resource group. 
 - This means that users in the Marketing group can create or manage any Azure resource in the pharma-sales resource group. 
-- Marketing users do not have access to resources outside the pharma-sales resource group, unless they are part of another role assignment.
+- Marketing users do not have access to resources outside the pharma-sales resource group, unless they are part of another role 
+
+- See diagram <img src="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/overview/rbac-overview.png"/>
+
+## Multiple role assignments
+- So what happens if you have multiple overlapping role assignments? RBAC is an additive model, so your effective permissions are the addition of your role assignments. 
+- Consider the following example where a user is granted the Contributor role at the subscription scope and the Reader role on a resource group. 
+- The addition of the Contributor permissions and the Reader permissions is effectively the Contributor role for the resource group. 
+- Therefore, in this case, the Reader role assignment has no impact.
+
+- See diagram:
+<img src="https://docs.microsoft.com/en-us/azure/role-based-access-control/media/overview/rbac-multiple-roles.png">
+
+## Deny assignments
+- Previously, RBAC was an allow-only model with no deny, but now RBAC supports deny assignments in a limited way. 
+- Similar to a role assignment, a deny assignment attaches a set of deny actions to a user, group, service principal, or managed identity at a particular scope for the purpose of denying access. 
+- A role assignment defines a set of actions that are allowed, while a deny assignment defines a set of actions that are not allowed. 
+- In other words, deny assignments block users from performing specified actions even if a role assignment grants them access. 
+- Deny assignments take precedence over role assignments. 
+- For more information, see [Understand deny assignments for Azure resources](https://docs.microsoft.com/en-us/azure/role-based-access-control/deny-assignments).
+
+## How RBAC determines if a user has access to a resource
+- The following are the high-level steps that RBAC uses to determine if you have access to a resource on the management plane. 
+  - This is helpful to understand if you are trying to troubleshoot an access issue.
+
+  - A user (or service principal) acquires a token for Azure Resource Manager.
+
+  - The token includes the **user's group memberships** (including transitive group memberships).
+
+  - The user makes a REST API call to Azure Resource Manager with the token attached.
+
+  - **Azure Resource Manager** retrieves all the **role assignments** and **deny assignments** that apply to the resource upon which the action is being taken.
+
+  - Azure Resource Manager narrows the role assignments that apply to this user or their group and determines what roles the user has for this resource.
+
+  - Azure Resource Manager determines if **the action in the API call** is **included in the roles the user has for this resource**.
+
+  - If the user doesn’t have a role with the action at the requested scope, access is not granted. Otherwise, Azure Resource Manager checks if a deny assignment applies.
+
+  - If a **deny assignment** applies, access is **blocked**. Otherwise access is **granted**.
+
+  # Azure Resource Manager Overview
+  <img src="https://docs.microsoft.com/en-us/azure/azure-resource-manager/media/resource-group-overview/consistent-management-layer.png">
+
+  ## Understand scope
+  - Azure provides four levels of scope: management groups, subscriptions, resource groups, and resources. The following image shows an example of these layers.
+  <img src="https://docs.microsoft.com/en-us/azure/azure-resource-manager/media/resource-group-overview/scope-levels.png">
+
+- You apply management settings at any of these levels of scope. 
+- The level you select determines how widely the setting is applied. 
+- Lower levels inherit settings from higher levels. For example, when you apply a policy to the subscription, the policy is applied to all resource groups and resources in your subscription. 
+- When you apply a policy on the resource group, that policy is applied the resource group and all its resources. However, another resource group doesn't have that policy assignment.
+
+- You can deploy templates to management groups, subscriptions, or resource groups.
+
+## Resource groups
+- There are some important factors to consider when defining your resource group:
+
+- All the resources in your group should share the same lifecycle. You deploy, update, and delete them together. If one resource, such as a database server, needs to exist on a different deployment cycle it should be in another resource group.
+
+- Each resource can only exist in one resource group.
+
+- You can add or remove a resource to a resource group at any time.
+
+- You can move a resource from one resource group to another group. For more information, see Move resources to new resource group or subscription.
+
+- A resource group can contain resources that are located in different regions.
+
+- A resource group can be used to scope access control for administrative actions.
+
+- A resource can interact with resources in other resource groups. This interaction is common when the two resources are related but don't share the same lifecycle (for example, web apps connecting to a database).
+
+- When creating a resource group, you need to provide a location for that resource group. You may be wondering, "Why does a resource group need a location? And, if the resources can have different locations than the resource group, why does the resource group location matter at all?" The resource group stores metadata about the resources. When you specify a location for the resource group, you're specifying where that metadata is stored. For compliance reasons, you may need to ensure that your data is stored in a particular region.
+
+- If the resource group's region is temporarily unavailable, you can't update resources in the resource group because the metadata is unavailable. The resources in other regions will still function as expected, but you can't update them. For more information about building reliable applications, see Designing reliable Azure applications.
