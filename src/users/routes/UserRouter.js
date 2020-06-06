@@ -1,15 +1,15 @@
 let router = require("express").Router();
-let controller = require("../../controllers/user_controllers/user_controller");
-let verify_auth_scope = require("../../helpers/authentication/jwt_auth_scope_verifier");
+let controller = require("../controllers/UserController");
+let verifyAuthScope = require("../../helpers/authentication/jwt_auth_scope_verifier");
 let {
-  require_authentication,
+  requireAuthentication,
 } = require("../../helpers/authentication/authentication_manager");
 
 router
   .route("/:id")
   .get(
-    require_authentication,
-    verify_auth_scope(["read:users"]),
+    requireAuthentication,
+    verifyAuthScope(["read:users"]),
     controller.getUser
   );
 router.route("/").post(controller.createUser); //User create should not be authenticated

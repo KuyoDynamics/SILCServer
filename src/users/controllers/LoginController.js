@@ -1,11 +1,11 @@
-let User = require("../../models/user_models/user_model");
+let User = require("../models/User");
 const {
-  extract_credentials,
+  extractCredentials,
 } = require("../../helpers/authentication/jwt_auth_header_token_extractor");
 
 async function login(req, res, next) {
   try {
-    let credentials = extract_credentials(req);
+    let credentials = extractCredentials(req);
     let password;
     let username;
 

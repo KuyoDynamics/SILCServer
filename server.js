@@ -14,7 +14,7 @@
   //load environment variables
   dotenv.config();
 
-  // mongoose connection instance
+  //mongoose connection instance
   let connection = mongoose.connection;
 
   app.use(cors());
