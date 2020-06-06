@@ -1,11 +1,11 @@
 language: node_js
 node_js:
-- 10.2.1
+  - 14.3.x
 services:
-- mongodb
+  - mongodb
 install:
-- npm install
-- chmod +x node_modules/.bin/*
+  - npm install
+  - chmod +x node_modules/.bin/*
 deploy:
   provider: heroku
   api_key:
@@ -14,4 +14,4 @@ deploy:
   on:
     repo: BantuLab/SILCServer
 after_failure:
-- find $HOME ! \( -type d \) -name node-dev -exec ls -lah {} \;
+  - find $HOME ! \( -type d \) -name node-dev -exec ls -lah {} \;
