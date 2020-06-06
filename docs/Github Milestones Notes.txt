@@ -1,0 +1,14 @@
+-An issue can belong to multiple projects but only one Milestone
+-projects have no progress bar or deadline, but can now be closed
+-Milestones on the other hand have all that, but lack any form of organization. An issue is either in a milestone, or isn't
+-Milestones can be ordered
+-Issues can be filtered by porject as well as milestones
+-Projects can contain notes(which can be converted as issues) so it doesn't pollute the issue tracker with vague ideas
+-A project can span over multiple milestones, and a milestone can contain parts of different projects
+-An organization can have projects as well. These projects can include tickets from any repository in the organization, which makes it quite useful
+-So the way I see it, is that Projects are a completely separate way to visualize and organize your work on 
+an higher level (think "project management", multiple teams, multiple repository, etc.), 
+while Milestones are a way to organize your deadlines and releases on a more 
+basic level (think "release management", "versions", etc.). 
+-With this in mind, it makes sense that an issue only belongs to one 
+Milestone (it's only released or pushed to production once) but can be part of different Projects.
