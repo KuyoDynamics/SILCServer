@@ -1,4 +1,4 @@
-const User = require("../users/models/user_role_model");
+const User = require("../users/models/User");
 const SILCGroup = require("../../../silc_api/models/silc/silc_group_model");
 
 function isValidNationalID(national_id) {
