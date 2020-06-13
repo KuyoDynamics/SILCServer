@@ -24,6 +24,8 @@ async function createNewJWTToken(req, res, next) {
     let token = await jwt.sign(payload, API_SECRET, signing_options);
     res.json({
       token,
+      token_type: "access_token",
+      expires_in: expiresIn,
     });
 
     res.status(200).send();

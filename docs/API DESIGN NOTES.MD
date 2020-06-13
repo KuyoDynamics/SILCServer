@@ -1,5 +1,6 @@
 # REST API DESIGN NOTES
 
+- HATEOAS Ion and HAL Linking strategies for json+ion content type. Check talk (https://www.youtube.com/watch?v=MiOSzpfP1Ww)[here]
 - (https://github.com/mpnally/Terrifically-Simple-JSON)[Read here for Guidelines to a clean API Design]
 - Watch the talk (https://www.youtube.com/watch?v=P0a7PwRNLVU)[here]
 - The below were copied from the above repo as a backup:
@@ -36,13 +37,13 @@ The following JSON document encodes the same information in a different style. I
 
 1.  {
 2.  "properties":
-3.       {
-4.        "name": "Martin",
-5.        "bornOn": "1957-01-05"
-6.       },
+3.         {
+4.          "name": "Martin",
+5.          "bornOn": "1957-01-05"
+6.         },
 7.  "links": [
-8.       {
-9.        "rel": "bornIn",
+8.         {
+9.          "rel": "bornIn",
 10.      "href": "http://www.scotland.org#"
 11.     }
 12. ]
