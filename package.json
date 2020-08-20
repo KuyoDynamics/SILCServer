@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/BantuLab/SILCServer#readme",
   "dependencies": {
-    "bcrypt": "^3.0.8",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
