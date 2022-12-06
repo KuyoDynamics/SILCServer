@@ -29,11 +29,11 @@
   "homepage": "https://github.com/BantuLab/SILCServer#readme",
   "dependencies": {
     "bcrypt": "^3.0.8",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "firebase-admin": "^8.12.1",
     "joi": "^13.7.0",
     "jsonwebtoken": "^8.5.1",
